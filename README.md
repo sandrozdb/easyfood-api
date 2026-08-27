@@ -95,7 +95,7 @@ Invoke-RestMethod -Uri "http://localhost:3000/restaurants" -Method Get
 
 ### `POST /restaurants`
 
-Valida e cadastra um restaurante no MySQL. Um cadastro válido recebe um ID automático, começa com avaliação 0 e retorna o status HTTP 201. Dados inválidos retornam o status HTTP 400 com os erros encontrados.
+Valida e cadastra um restaurante no MySQL. A avaliação inicial é opcional, aceita valores entre 0 e 5 com no máximo uma casa decimal e assume 0 quando não é informada. Um cadastro válido recebe um ID automático e retorna o status HTTP 201. Dados inválidos retornam o status HTTP 400 com os erros encontrados.
 
 Exemplo:
 
@@ -106,6 +106,7 @@ $restaurante = @{
     description = "Pizzas artesanais feitas com ingredientes selecionados."
     address = "Rua das Acacias, 150 - Centro"
     phone = "(11) 99999-1234"
+    rating = 4.5
 } | ConvertTo-Json
 
 Invoke-RestMethod `
@@ -128,6 +129,10 @@ Para testar a persistência manualmente:
 5. Repita o GET e confirme que o registro continua disponível.
 
 O projeto disponibiliza somente GET e POST nesta etapa. PUT e DELETE ainda não fazem parte da API.
+
+## Interface
+
+As páginas de listagem e cadastro usam a mesma moldura de celular no desktop: 390px de largura, 844px de altura, borda de 8px e cantos de 42px. O conteúdo possui uma única rolagem interna, mantendo a moldura fixa quando novos restaurantes são exibidos. Em telas de até 430px, a interface ocupa toda a largura e a altura disponível do dispositivo, sem borda ou cantos arredondados.
 
 ## Documentação
 

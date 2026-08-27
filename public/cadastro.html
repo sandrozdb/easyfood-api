@@ -20,16 +20,20 @@
         body {
             min-height: 100vh;
             padding: 28px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #fff4eb, #f3f4f6);
             color: #202020;
             font-family: Arial, sans-serif;
         }
 
         .celular {
+            display: flex;
+            flex-direction: column;
             width: 100%;
             max-width: 390px;
-            min-height: 820px;
-            margin: auto;
+            height: 844px;
             border: 8px solid #1b1b1b;
             border-radius: 42px;
             background: white;
@@ -39,6 +43,7 @@
 
         .barra-status {
             display: flex;
+            flex-shrink: 0;
             align-items: center;
             justify-content: space-between;
             padding: 16px 22px 8px;
@@ -47,7 +52,16 @@
         }
 
         .container {
+            min-height: 0;
+            flex: 1;
             padding: 12px 20px 30px;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-width: none;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
         }
 
         header {
@@ -251,13 +265,18 @@
 
         @media (max-width: 430px) {
             body {
+                height: 100vh;
+                height: 100dvh;
                 padding: 0;
                 background: white;
+                overflow: hidden;
             }
 
             .celular {
+                width: 100%;
                 max-width: 100%;
-                min-height: 100vh;
+                height: 100vh;
+                height: 100dvh;
                 border: none;
                 border-radius: 0;
                 box-shadow: none;
@@ -273,7 +292,11 @@
             <span>📶 🔋</span>
         </div>
 
-        <div class="container">
+        <div
+            class="container"
+            tabindex="0"
+            aria-label="Formulário de cadastro"
+        >
             <header>
                 <a
                     href="/"
@@ -389,6 +412,31 @@
                 </div>
 
                 <div class="campo">
+                    <label for="rating">
+                        Avaliação inicial (opcional)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="rating"
+                        name="rating"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                        placeholder="Ex.: 4.5"
+                    >
+
+                    <span class="orientacao">
+                        A nota deve estar entre 0 e 5. Se não for informada, começará em 0.
+                    </span>
+
+                    <span
+                        id="erro-rating"
+                        class="erro-campo"
+                    ></span>
+                </div>
+
+                <div class="campo">
                     <label for="address">
                         Endereço *
                     </label>
@@ -475,6 +523,9 @@
 
         const telefone =
             document.getElementById("phone");
+
+        const avaliacao =
+            document.getElementById("rating");
 
         const contador =
             document.getElementById("contador");
@@ -650,19 +701,50 @@
             return true;
         }
 
+        function validarAvaliacao() {
+            const valor = avaliacao.value.trim();
+
+            if (valor === "") {
+                removerErro(avaliacao);
+                avaliacao.classList.remove("valido");
+                return true;
+            }
+
+            const numero = Number(valor);
+            const formatoValido = /^\d(?:\.\d)?$/.test(valor);
+
+            if (
+                !formatoValido ||
+                !Number.isFinite(numero) ||
+                numero < 0 ||
+                numero > 5
+            ) {
+                mostrarErro(
+                    avaliacao,
+                    "Use uma nota entre 0 e 5, com no máximo uma casa decimal."
+                );
+                return false;
+            }
+
+            marcarComoValido(avaliacao);
+            return true;
+        }
+
         function validarFormulario() {
             const nomeValido = validarNome();
             const categoriaValida = validarCategoria();
             const descricaoValida = validarDescricao();
             const enderecoValido = validarEndereco();
             const telefoneValido = validarTelefone();
+            const avaliacaoValida = validarAvaliacao();
 
             return (
                 nomeValido &&
                 categoriaValida &&
                 descricaoValida &&
                 enderecoValido &&
-                telefoneValido
+                telefoneValido &&
+                avaliacaoValida
             );
         }
 
@@ -738,11 +820,14 @@
             }
         });
 
+        avaliacao.addEventListener("input", validarAvaliacao);
+
         nome.addEventListener("blur", validarNome);
         categoria.addEventListener("blur", validarCategoria);
         descricao.addEventListener("blur", validarDescricao);
         endereco.addEventListener("blur", validarEndereco);
         telefone.addEventListener("blur", validarTelefone);
+        avaliacao.addEventListener("blur", validarAvaliacao);
 
         formulario.addEventListener("submit", async evento => {
             evento.preventDefault();
@@ -762,7 +847,11 @@
                 category: categoria.value,
                 description: descricao.value.trim(),
                 address: endereco.value.trim(),
-                phone: telefone.value.trim()
+                phone: telefone.value.trim(),
+                rating:
+                    avaliacao.value.trim() === ""
+                        ? 0
+                        : Number(avaliacao.value)
             };
 
             botaoCadastrar.disabled = true;
@@ -803,7 +892,8 @@
                     categoria,
                     descricao,
                     endereco,
-                    telefone
+                    telefone,
+                    avaliacao
                 ];
 
                 campos.forEach(campo => {

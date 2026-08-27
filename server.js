@@ -27,6 +27,8 @@ app.post("/restaurants", async (req, res) => {
     const description = String(req.body.description || "").trim();
     const address = String(req.body.address || "").trim();
     const phone = String(req.body.phone || "").trim();
+    const ratingRecebido = req.body.rating;
+    let rating = 0;
 
     const categoriasPermitidas = [
         "Pizza",
@@ -43,6 +45,41 @@ app.post("/restaurants", async (req, res) => {
     const padraoTelefone = /^\(\d{2}\) \d{4,5}-\d{4}$/;
 
     const erros = [];
+
+    const ratingNaoInformado =
+        ratingRecebido === undefined ||
+        ratingRecebido === null ||
+        (
+            typeof ratingRecebido === "string" &&
+            ratingRecebido.trim() === ""
+        );
+
+    if (!ratingNaoInformado) {
+        const tipoValido =
+            typeof ratingRecebido === "number" ||
+            typeof ratingRecebido === "string";
+
+        const textoRating = tipoValido
+            ? String(ratingRecebido).trim()
+            : "";
+
+        const formatoValido = /^\d(?:\.\d)?$/.test(textoRating);
+        const ratingConvertido = Number(textoRating);
+
+        if (
+            !tipoValido ||
+            !formatoValido ||
+            !Number.isFinite(ratingConvertido) ||
+            ratingConvertido < 0 ||
+            ratingConvertido > 5
+        ) {
+            erros.push(
+                "A avaliação deve ser um número entre 0 e 5, com no máximo uma casa decimal."
+            );
+        } else {
+            rating = ratingConvertido;
+        }
+    }
 
     if (!padraoNome.test(name)) {
         erros.push(
@@ -78,7 +115,7 @@ app.post("/restaurants", async (req, res) => {
     const novoRestaurante = {
         name,
         category,
-        rating: 0,
+        rating,
         description,
         address,
         phone
