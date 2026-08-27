@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cadastrar restaurante | EasyFood</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 28px 12px;
+            background: linear-gradient(135deg, #fff4eb, #f3f4f6);
+            color: #202020;
+            font-family: Arial, sans-serif;
+        }
+
+        .celular {
+            width: 100%;
+            max-width: 390px;
+            min-height: 820px;
+            margin: auto;
+            border: 8px solid #1b1b1b;
+            border-radius: 42px;
+            background: white;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.22);
+            overflow: hidden;
+        }
+
+        .barra-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 22px 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 12px 20px 30px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 18px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .voltar {
+            border: none;
+            background: transparent;
+            color: #333;
+            cursor: pointer;
+            font-size: 22px;
+            text-decoration: none;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            color: #ff5a1f;
+        }
+
+        .icone-cabecalho {
+            display: flex;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fff2e8;
+        }
+
+        .introducao {
+            margin-bottom: 22px;
+        }
+
+        .introducao h1 {
+            margin-bottom: 7px;
+            font-size: 23px;
+        }
+
+        .introducao p {
+            color: #777;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .aviso {
+            padding: 11px 13px;
+            margin-bottom: 18px;
+            border: 1px solid #fed7aa;
+            border-radius: 10px;
+            background: #fff7ed;
+            color: #9a3412;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .campo {
+            margin-bottom: 16px;
+        }
+
+        .campo label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .campo input,
+        .campo select,
+        .campo textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #dedede;
+            border-radius: 11px;
+            outline: none;
+            background: #fafafa;
+            color: #202020;
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .campo textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .campo input:focus,
+        .campo select:focus,
+        .campo textarea:focus {
+            border-color: #ff5a1f;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.1);
+        }
+
+        .campo input.invalido,
+        .campo select.invalido,
+        .campo textarea.invalido {
+            border-color: #dc2626;
+            background: #fffafa;
+        }
+
+        .campo input.valido,
+        .campo select.valido,
+        .campo textarea.valido {
+            border-color: #16a34a;
+        }
+
+        .orientacao {
+            display: block;
+            margin-top: 5px;
+            color: #999;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .erro-campo {
+            display: none;
+            margin-top: 5px;
+            color: #b91c1c;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .erro-campo.visivel {
+            display: block;
+        }
+
+        .contador {
+            display: block;
+            margin-top: 5px;
+            color: #999;
+            font-size: 10px;
+            text-align: right;
+        }
+
+        .botao-cadastrar {
+            width: 100%;
+            padding: 14px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff5a1f, #ff8a3d);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(255, 90, 31, 0.25);
+        }
+
+        .botao-cadastrar:hover {
+            filter: brightness(0.95);
+        }
+
+        .botao-cadastrar:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .mensagem {
+            display: none;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .mensagem.sucesso {
+            display: block;
+            border: 1px solid #bbf7d0;
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .mensagem.erro {
+            display: block;
+            border: 1px solid #fecaca;
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .link-listagem {
+            display: block;
+            margin-top: 18px;
+            color: #ff5a1f;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        @media (max-width: 430px) {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            .celular {
+                max-width: 100%;
+                min-height: 100vh;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="celular">
+        <div class="barra-status">
+            <span>9:41</span>
+            <span>📶 🔋</span>
+        </div>
+
+        <div class="container">
+            <header>
+                <a
+                    href="/"
+                    class="voltar"
+                    aria-label="Voltar para a página inicial"
+                >
+                    ←
+                </a>
+
+                <div class="logo">
+                    Easy<span>Food</span>
+                </div>
+
+                <div class="icone-cabecalho">🍽️</div>
+            </header>
+
+            <section class="introducao">
+                <h1>Cadastrar restaurante</h1>
+
+                <p>
+                    Preencha os dados do seu restaurante para fazer
+                    parte da EasyFood.
+                </p>
+            </section>
+
+            <div class="aviso">
+                Os campos identificados com * são obrigatórios.
+            </div>
+
+            <form id="formulario-cadastro">
+                <div class="campo">
+                    <label for="name">
+                        Nome do restaurante *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        minlength="3"
+                        maxlength="60"
+                        placeholder="Ex.: Burger House"
+                        autocomplete="organization"
+                        required
+                    >
+
+                    <span class="orientacao">
+                        Digite entre 3 e 60 caracteres.
+                    </span>
+
+                    <span
+                        id="erro-name"
+                        class="erro-campo"
+                    ></span>
+                </div>
+
+                <div class="campo">
+                    <label for="category">
+                        Categoria *
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
+                        <option value="">
+                            Selecione uma categoria
+                        </option>
+
+                        <option value="Pizza">Pizza</option>
+                        <option value="Burguer">Burguer</option>
+                        <option value="Massa">Massa</option>
+                        <option value="Saudável">Saudável</option>
+                        <option value="Sushi">Sushi</option>
+                        <option value="Mexicana">Mexicana</option>
+                        <option value="Churrasco">Churrasco</option>
+                        <option value="Sobremesas">Sobremesas</option>
+                    </select>
+
+                    <span
+                        id="erro-category"
+                        class="erro-campo"
+                    ></span>
+                </div>
+
+                <div class="campo">
+                    <label for="description">
+                        Descrição *
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        minlength="20"
+                        maxlength="160"
+                        placeholder="Fale um pouco sobre seu restaurante..."
+                        required
+                    ></textarea>
+
+                    <span class="orientacao">
+                        Digite uma descrição com pelo menos 20 caracteres.
+                    </span>
+
+                    <span id="contador" class="contador">
+                        0/160
+                    </span>
+
+                    <span
+                        id="erro-description"
+                        class="erro-campo"
+                    ></span>
+                </div>
+
+                <div class="campo">
+                    <label for="address">
+                        Endereço *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        minlength="10"
+                        maxlength="120"
+                        placeholder="Rua, número, bairro, cidade - UF"
+                        autocomplete="street-address"
+                        required
+                    >
+
+                    <span class="orientacao">
+                        Informe rua, número, bairro e cidade.
+                    </span>
+
+                    <span
+                        id="erro-address"
+                        class="erro-campo"
+                    ></span>
+                </div>
+
+                <div class="campo">
+                    <label for="phone">
+                        Telefone *
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        inputmode="numeric"
+                        maxlength="15"
+                        placeholder="(11) 99999-9999"
+                        autocomplete="tel"
+                        required
+                    >
+
+                    <span class="orientacao">
+                        Digite um telefone com DDD. Apenas números.
+                    </span>
+
+                    <span
+                        id="erro-phone"
+                        class="erro-campo"
+                    ></span>
+                </div>
+
+                <button
+                    type="submit"
+                    id="botao-cadastrar"
+                    class="botao-cadastrar"
+                >
+                    Cadastrar restaurante
+                </button>
+
+                <p id="mensagem" class="mensagem"></p>
+            </form>
+
+            <a href="/" class="link-listagem">
+                Ver restaurantes cadastrados
+            </a>
+        </div>
+    </main>
+
+    <script>
+        const formulario =
+            document.getElementById("formulario-cadastro");
+
+        const nome =
+            document.getElementById("name");
+
+        const categoria =
+            document.getElementById("category");
+
+        const descricao =
+            document.getElementById("description");
+
+        const endereco =
+            document.getElementById("address");
+
+        const telefone =
+            document.getElementById("phone");
+
+        const contador =
+            document.getElementById("contador");
+
+        const mensagem =
+            document.getElementById("mensagem");
+
+        const botaoCadastrar =
+            document.getElementById("botao-cadastrar");
+
+        const categoriasPermitidas = [
+            "Pizza",
+            "Burguer",
+            "Massa",
+            "Saudável",
+            "Sushi",
+            "Mexicana",
+            "Churrasco",
+            "Sobremesas"
+        ];
+
+        function mostrarErro(campo, texto) {
+            const elementoErro =
+                document.getElementById(`erro-${campo.id}`);
+
+            campo.classList.add("invalido");
+            campo.classList.remove("valido");
+
+            elementoErro.textContent = texto;
+            elementoErro.classList.add("visivel");
+        }
+
+        function removerErro(campo) {
+            const elementoErro =
+                document.getElementById(`erro-${campo.id}`);
+
+            campo.classList.remove("invalido");
+
+            elementoErro.textContent = "";
+            elementoErro.classList.remove("visivel");
+        }
+
+        function marcarComoValido(campo) {
+            removerErro(campo);
+            campo.classList.add("valido");
+        }
+
+        function validarNome() {
+            const valor = nome.value.trim();
+            const padrao = /^[A-Za-zÀ-ÿ0-9.'’& -]+$/;
+
+            if (!valor) {
+                mostrarErro(nome, "Informe o nome do restaurante.");
+                return false;
+            }
+
+            if (valor.length < 3 || valor.length > 60) {
+                mostrarErro(
+                    nome,
+                    "O nome deve ter entre 3 e 60 caracteres."
+                );
+                return false;
+            }
+
+            if (!padrao.test(valor)) {
+                mostrarErro(
+                    nome,
+                    "O nome contém caracteres não permitidos."
+                );
+                return false;
+            }
+
+            marcarComoValido(nome);
+            return true;
+        }
+
+        function validarCategoria() {
+            if (!categoriasPermitidas.includes(categoria.value)) {
+                mostrarErro(
+                    categoria,
+                    "Selecione uma categoria válida."
+                );
+                return false;
+            }
+
+            marcarComoValido(categoria);
+            return true;
+        }
+
+        function validarDescricao() {
+            const valor = descricao.value.trim();
+
+            if (!valor) {
+                mostrarErro(
+                    descricao,
+                    "Informe uma descrição."
+                );
+                return false;
+            }
+
+            if (valor.length < 20 || valor.length > 160) {
+                mostrarErro(
+                    descricao,
+                    "A descrição deve ter entre 20 e 160 caracteres."
+                );
+                return false;
+            }
+
+            marcarComoValido(descricao);
+            return true;
+        }
+
+        function validarEndereco() {
+            const valor = endereco.value.trim();
+
+            if (!valor) {
+                mostrarErro(
+                    endereco,
+                    "Informe o endereço do restaurante."
+                );
+                return false;
+            }
+
+            if (valor.length < 10 || valor.length > 120) {
+                mostrarErro(
+                    endereco,
+                    "O endereço deve ter entre 10 e 120 caracteres."
+                );
+                return false;
+            }
+
+            if (!/[A-Za-zÀ-ÿ]/.test(valor)) {
+                mostrarErro(
+                    endereco,
+                    "O endereço precisa conter o nome da rua."
+                );
+                return false;
+            }
+
+            if (!/\d/.test(valor)) {
+                mostrarErro(
+                    endereco,
+                    "Informe o número do endereço."
+                );
+                return false;
+            }
+
+            marcarComoValido(endereco);
+            return true;
+        }
+
+        function validarTelefone() {
+            const padrao =
+                /^\(\d{2}\) \d{4,5}-\d{4}$/;
+
+            if (!telefone.value.trim()) {
+                mostrarErro(
+                    telefone,
+                    "Informe o telefone."
+                );
+                return false;
+            }
+
+            if (!padrao.test(telefone.value)) {
+                mostrarErro(
+                    telefone,
+                    "Use o formato (11) 99999-9999."
+                );
+                return false;
+            }
+
+            marcarComoValido(telefone);
+            return true;
+        }
+
+        function validarFormulario() {
+            const nomeValido = validarNome();
+            const categoriaValida = validarCategoria();
+            const descricaoValida = validarDescricao();
+            const enderecoValido = validarEndereco();
+            const telefoneValido = validarTelefone();
+
+            return (
+                nomeValido &&
+                categoriaValida &&
+                descricaoValida &&
+                enderecoValido &&
+                telefoneValido
+            );
+        }
+
+        nome.addEventListener("input", () => {
+            nome.value = nome.value.replace(
+                /[^A-Za-zÀ-ÿ0-9.'’& -]/g,
+                ""
+            );
+
+            if (nome.value.trim().length >= 3) {
+                validarNome();
+            } else {
+                removerErro(nome);
+                nome.classList.remove("valido");
+            }
+        });
+
+        categoria.addEventListener("change", validarCategoria);
+
+        descricao.addEventListener("input", () => {
+            contador.textContent =
+                `${descricao.value.length}/160`;
+
+            if (descricao.value.trim().length >= 20) {
+                validarDescricao();
+            } else {
+                removerErro(descricao);
+                descricao.classList.remove("valido");
+            }
+        });
+
+        endereco.addEventListener("input", () => {
+            endereco.value = endereco.value.replace(
+                /[^A-Za-zÀ-ÿ0-9.,ºª°/#'’& -]/g,
+                ""
+            );
+
+            if (endereco.value.trim().length >= 10) {
+                validarEndereco();
+            } else {
+                removerErro(endereco);
+                endereco.classList.remove("valido");
+            }
+        });
+
+        telefone.addEventListener("input", () => {
+            const numeros =
+                telefone.value.replace(/\D/g, "").slice(0, 11);
+
+            if (numeros.length <= 2) {
+                telefone.value = numeros;
+            } else if (numeros.length <= 6) {
+                telefone.value =
+                    `(${numeros.slice(0, 2)}) ` +
+                    numeros.slice(2);
+            } else if (numeros.length <= 10) {
+                telefone.value =
+                    `(${numeros.slice(0, 2)}) ` +
+                    `${numeros.slice(2, 6)}-` +
+                    numeros.slice(6);
+            } else {
+                telefone.value =
+                    `(${numeros.slice(0, 2)}) ` +
+                    `${numeros.slice(2, 7)}-` +
+                    numeros.slice(7);
+            }
+
+            if (numeros.length === 10 || numeros.length === 11) {
+                validarTelefone();
+            } else {
+                removerErro(telefone);
+                telefone.classList.remove("valido");
+            }
+        });
+
+        nome.addEventListener("blur", validarNome);
+        categoria.addEventListener("blur", validarCategoria);
+        descricao.addEventListener("blur", validarDescricao);
+        endereco.addEventListener("blur", validarEndereco);
+        telefone.addEventListener("blur", validarTelefone);
+
+        formulario.addEventListener("submit", async evento => {
+            evento.preventDefault();
+
+            mensagem.className = "mensagem";
+            mensagem.textContent = "";
+
+            if (!validarFormulario()) {
+                mensagem.className = "mensagem erro";
+                mensagem.textContent =
+                    "Revise os campos destacados antes de continuar.";
+                return;
+            }
+
+            const restaurante = {
+                name: nome.value.trim(),
+                category: categoria.value,
+                description: descricao.value.trim(),
+                address: endereco.value.trim(),
+                phone: telefone.value.trim()
+            };
+
+            botaoCadastrar.disabled = true;
+            botaoCadastrar.textContent = "Cadastrando...";
+
+            try {
+                const resposta = await fetch("/restaurants", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(restaurante)
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    const detalhes =
+                        Array.isArray(dados.errors)
+                            ? dados.errors.join(" ")
+                            : dados.message;
+
+                    throw new Error(
+                        detalhes ||
+                        "Não foi possível realizar o cadastro."
+                    );
+                }
+
+                mensagem.className = "mensagem sucesso";
+                mensagem.textContent =
+                    "Restaurante cadastrado com sucesso!";
+
+                formulario.reset();
+                contador.textContent = "0/160";
+
+                const campos = [
+                    nome,
+                    categoria,
+                    descricao,
+                    endereco,
+                    telefone
+                ];
+
+                campos.forEach(campo => {
+                    campo.classList.remove("valido", "invalido");
+                    removerErro(campo);
+                });
+            } catch (erro) {
+                mensagem.className = "mensagem erro";
+                mensagem.textContent = erro.message;
+            } finally {
+                botaoCadastrar.disabled = false;
+                botaoCadastrar.textContent =
+                    "Cadastrar restaurante";
+            }
+        });
+    </script>
+</body>
+</html>

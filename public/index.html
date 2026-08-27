@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>EasyFood</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 28px 12px;
+            background: linear-gradient(135deg, #fff4eb, #f3f4f6);
+            color: #202020;
+            font-family: Arial, sans-serif;
+        }
+
+        .celular {
+            width: 100%;
+            max-width: 390px;
+            min-height: 820px;
+            margin: auto;
+            border: 8px solid #1b1b1b;
+            border-radius: 42px;
+            background: white;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.22);
+            overflow: hidden;
+        }
+
+        .barra-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 22px 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 12px 18px 28px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .menu {
+            border: none;
+            background: transparent;
+            color: #333;
+            cursor: pointer;
+            font-size: 22px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            color: #ff5a1f;
+        }
+
+        .botao-cadastro {
+            display: flex;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #ff5a1f;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 6px 14px rgba(255, 90, 31, 0.25);
+            transition: 0.2s;
+        }
+
+        .botao-cadastro:hover {
+            transform: scale(1.06);
+            background: #e94c13;
+        }
+
+        .apresentacao {
+            padding: 22px;
+            margin-bottom: 18px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #ff5a1f, #ff8a3d);
+            color: white;
+            box-shadow: 0 12px 25px rgba(255, 90, 31, 0.25);
+        }
+
+        .apresentacao h1 {
+            margin-bottom: 8px;
+            font-size: 23px;
+            line-height: 1.15;
+        }
+
+        .apresentacao p {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .busca {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 14px 16px;
+            border: 1px solid #e5e5e5;
+            border-radius: 13px;
+            outline: none;
+            background: #fafafa;
+            font-size: 14px;
+        }
+
+        .busca:focus {
+            border-color: #ff5a1f;
+            background: white;
+        }
+
+        .categorias {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .categorias::-webkit-scrollbar {
+            display: none;
+        }
+
+        .categoria {
+            padding: 8px 14px;
+            border: 1px solid #e3e3e3;
+            border-radius: 30px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .categoria:hover,
+        .categoria.ativa {
+            border-color: #ff5a1f;
+            background: #ff5a1f;
+            color: white;
+        }
+
+        .cabecalho-lista {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 2px 13px;
+        }
+
+        .titulo-lista {
+            font-size: 18px;
+        }
+
+        .quantidade {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .lista {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 11px;
+        }
+
+        .restaurante {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 14px;
+            border: 1px solid #eeeeee;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 5px 14px rgba(0, 0, 0, 0.06);
+            transition: 0.2s;
+        }
+
+        .restaurante:hover {
+            transform: translateY(-2px);
+            border-color: #ffd4c2;
+            box-shadow: 0 9px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .icone {
+            display: flex;
+            width: 55px;
+            height: 55px;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 13px;
+            background: #fff2e8;
+            font-size: 27px;
+        }
+
+        .informacoes {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .informacoes h3 {
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .categoria-restaurante {
+            margin-bottom: 7px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .descricao {
+            max-height: 46px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            color: #555;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .detalhe {
+            margin-bottom: 5px;
+            color: #777;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        .rodape-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .nota {
+            color: #f59e0b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .favorito {
+            align-self: flex-start;
+            border: none;
+            background: transparent;
+            color: #bbb;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .favorito:hover,
+        .favorito.ativo {
+            color: #ff5a1f;
+        }
+
+        .botao-ver-mais {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ff5a1f;
+            border-radius: 13px;
+            background: white;
+            color: #ff5a1f;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .botao-ver-mais:hover {
+            background: #ff5a1f;
+            color: white;
+        }
+
+        .mensagem {
+            padding: 25px 15px;
+            border-radius: 14px;
+            background: #fafafa;
+            color: #777;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        footer {
+            margin-top: 28px;
+            color: #aaa;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        @media (max-width: 430px) {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            .celular {
+                max-width: 100%;
+                min-height: 100vh;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="celular">
+        <div class="barra-status">
+            <span>9:41</span>
+            <span>📶 🔋</span>
+        </div>
+
+        <div class="container">
+            <header>
+                <button
+                    class="menu"
+                    type="button"
+                    aria-label="Abrir menu"
+                >
+                    ☰
+                </button>
+
+                <div class="logo">
+                    Easy<span>Food</span>
+                </div>
+
+                <a
+                    href="/cadastro.html"
+                    class="botao-cadastro"
+                    aria-label="Cadastrar restaurante"
+                    title="Cadastrar restaurante"
+                >
+                    +
+                </a>
+            </header>
+
+            <section class="apresentacao">
+                <h1>Encontre seu próximo restaurante</h1>
+
+                <p>
+                    Descubra os melhores sabores da sua região.
+                </p>
+            </section>
+
+            <input
+                type="search"
+                id="busca"
+                class="busca"
+                placeholder="🔎 Buscar por nome ou categoria..."
+            >
+
+            <div id="categorias" class="categorias"></div>
+
+            <div class="cabecalho-lista">
+                <h2 class="titulo-lista">
+                    Restaurantes
+                </h2>
+
+                <span
+                    id="quantidade"
+                    class="quantidade"
+                ></span>
+            </div>
+
+            <section
+                id="lista-restaurantes"
+                class="lista"
+            >
+                <p class="mensagem">
+                    Carregando restaurantes...
+                </p>
+            </section>
+
+            <footer>
+                EasyFood — encontre os melhores sabores
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        let restaurantes = [];
+        let categoriaSelecionada = "Todos";
+        let quantidadeVisivel = 3;
+
+        const lista =
+            document.getElementById("lista-restaurantes");
+
+        const busca =
+            document.getElementById("busca");
+
+        const categorias =
+            document.getElementById("categorias");
+
+        const quantidade =
+            document.getElementById("quantidade");
+
+        function escolherIcone(categoria) {
+            const icones = {
+                Pizza: "🍕",
+                Burguer: "🍔",
+                Massa: "🍝",
+                Saudável: "🥗",
+                Sushi: "🍣",
+                Mexicana: "🌮",
+                Churrasco: "🥩",
+                Sobremesas: "🍰"
+            };
+
+            return icones[categoria] || "🍽️";
+        }
+
+        function criarCategorias() {
+            const nomes = [
+                "Todos",
+                ...new Set(
+                    restaurantes.map(
+                        restaurante => restaurante.category
+                    )
+                )
+            ];
+
+            categorias.innerHTML = nomes.map(nome => `
+                <button
+                    type="button"
+                    class="categoria ${
+                        nome === categoriaSelecionada
+                            ? "ativa"
+                            : ""
+                    }"
+                    onclick="selecionarCategoria('${nome}')"
+                >
+                    ${nome}
+                </button>
+            `).join("");
+        }
+
+        function selecionarCategoria(categoria) {
+            categoriaSelecionada = categoria;
+            quantidadeVisivel = 3;
+
+            criarCategorias();
+            filtrarRestaurantes();
+        }
+
+        function filtrarRestaurantes() {
+            const termo =
+                busca.value.trim().toLowerCase();
+
+            const resultado = restaurantes.filter(
+                restaurante => {
+                    const nome =
+                        restaurante.name.toLowerCase();
+
+                    const categoria =
+                        restaurante.category.toLowerCase();
+
+                    const descricao =
+                        restaurante.description
+                            ?.toLowerCase() || "";
+
+                    const endereco =
+                        restaurante.address
+                            ?.toLowerCase() || "";
+
+                    const correspondeAoTexto =
+                        nome.includes(termo) ||
+                        categoria.includes(termo) ||
+                        descricao.includes(termo) ||
+                        endereco.includes(termo);
+
+                    const correspondeACategoria =
+                        categoriaSelecionada === "Todos" ||
+                        restaurante.category ===
+                            categoriaSelecionada;
+
+                    return (
+                        correspondeAoTexto &&
+                        correspondeACategoria
+                    );
+                }
+            );
+
+            mostrarRestaurantes(resultado);
+        }
+
+        function mostrarRestaurantes(dados) {
+            quantidade.textContent =
+                `${dados.length} ${
+                    dados.length === 1
+                        ? "resultado"
+                        : "resultados"
+                }`;
+
+            if (dados.length === 0) {
+                lista.innerHTML = `
+                    <p class="mensagem">
+                        Nenhum restaurante encontrado.
+                    </p>
+                `;
+
+                return;
+            }
+
+            const restaurantesVisiveis =
+                categoriaSelecionada === "Todos"
+                    ? dados.slice(0, quantidadeVisivel)
+                    : dados;
+
+            lista.innerHTML = restaurantesVisiveis.map(
+                restaurante => `
+                    <article class="restaurante">
+                        <div class="icone">
+                            ${
+                                escolherIcone(
+                                    restaurante.category
+                                )
+                            }
+                        </div>
+
+                        <div class="informacoes">
+                            <h3>${restaurante.name}</h3>
+
+                            <p class="categoria-restaurante">
+                                ${restaurante.category}
+                                • 20–30 min
+                            </p>
+
+                            <p class="descricao">
+                                ${
+                                    restaurante.description ||
+                                    "Descrição não informada."
+                                }
+                            </p>
+
+                            <p class="detalhe">
+                                📍 ${
+                                    restaurante.address ||
+                                    "Endereço não informado"
+                                }
+                            </p>
+
+                            <p class="detalhe">
+                                📞 ${
+                                    restaurante.phone ||
+                                    "Telefone não informado"
+                                }
+                            </p>
+
+                            <div class="rodape-card">
+                                <span class="nota">
+                                    ⭐ ${
+                                        Number(
+                                            restaurante.rating
+                                        ).toFixed(1)
+                                    }
+                                </span>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="favorito"
+                            aria-label="Adicionar aos favoritos"
+                            onclick="alternarFavorito(this)"
+                        >
+                            ♡
+                        </button>
+                    </article>
+                `
+            ).join("");
+
+            if (
+                categoriaSelecionada === "Todos" &&
+                quantidadeVisivel < dados.length
+            ) {
+                const restantes =
+                    dados.length - quantidadeVisivel;
+
+                lista.innerHTML += `
+                    <button
+                        type="button"
+                        class="botao-ver-mais"
+                        onclick="verMaisRestaurantes()"
+                    >
+                        Ver mais restaurantes (${restantes})
+                    </button>
+                `;
+            }
+        }
+
+        function verMaisRestaurantes() {
+            quantidadeVisivel += 3;
+            filtrarRestaurantes();
+        }
+
+        function alternarFavorito(botao) {
+            botao.classList.toggle("ativo");
+
+            botao.textContent =
+                botao.classList.contains("ativo")
+                    ? "♥"
+                    : "♡";
+        }
+
+        async function carregarRestaurantes() {
+            try {
+                const resposta =
+                    await fetch("/restaurants");
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        "Erro ao buscar os restaurantes."
+                    );
+                }
+
+                restaurantes = await resposta.json();
+
+                criarCategorias();
+                mostrarRestaurantes(restaurantes);
+            } catch (erro) {
+                quantidade.textContent = "";
+
+                lista.innerHTML = `
+                    <p class="mensagem">
+                        Não foi possível carregar os restaurantes.
+                    </p>
+                `;
+
+                console.error(erro);
+            }
+        }
+
+        busca.addEventListener("input", () => {
+            quantidadeVisivel = 3;
+            filtrarRestaurantes();
+        });
+
+        carregarRestaurantes();
+    </script>
+</body>
+</html>
