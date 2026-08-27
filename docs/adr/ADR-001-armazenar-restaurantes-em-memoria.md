@@ -2,7 +2,7 @@
 
 ## Status
 
-Aceita
+Substituída pelo [ADR-002 - Adotar MySQL para persistência](ADR-002-adotar-mysql-para-persistencia.md)
 
 ## Data
 
@@ -77,3 +77,5 @@ Esta decisão deve ser revista quando:
 ## Notas
 
 Esta é uma decisão temporária. Quando a tecnologia de banco de dados for efetivamente escolhida e aprovada, a nova decisão deverá ser registrada em um futuro ADR-002.
+
+O MySQL foi posteriormente adotado para persistência. Consulte o [ADR-002 - Adotar MySQL para persistência](ADR-002-adotar-mysql-para-persistencia.md). O restante deste documento foi preservado como histórico da decisão anterior.
