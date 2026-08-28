@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Restaurant {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(60)
+  category    String   @db.VarChar(30)
+  rating      Decimal  @default(0.0) @db.Decimal(2, 1)
+  description String   @db.VarChar(160)
+  address     String   @db.VarChar(120)
+  phone       String   @db.VarChar(15)
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+
+  @@unique([name, address, phone], map: "uq_restaurants_identity")
+  @@map("restaurants")
+}

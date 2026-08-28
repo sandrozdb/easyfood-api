@@ -1,57 +1,42 @@
-const { pool } = require("../config/database");
+const { prisma } = require("../config/database");
 
-const camposRestaurante = `
-    id,
-    name,
-    category,
-    rating,
-    description,
-    address,
-    phone,
-    created_at
-`;
+function normalizarRestaurante(restaurante) {
+    if (!restaurante) {
+        return null;
+    }
+
+    return {
+        ...restaurante,
+        rating: Number(restaurante.rating)
+    };
+}
 
 async function listRestaurants() {
-    const [restaurants] = await pool.execute(`
-        SELECT ${camposRestaurante}
-        FROM restaurants
-        ORDER BY id
-    `);
+    const restaurants = await prisma.restaurant.findMany({
+        orderBy: {
+            id: "asc"
+        }
+    });
 
-    return restaurants;
+    return restaurants.map(normalizarRestaurante);
 }
 
 async function findRestaurantById(id) {
-    const [restaurants] = await pool.execute(
-        `
-            SELECT ${camposRestaurante}
-            FROM restaurants
-            WHERE id = ?
-        `,
-        [id]
-    );
+    const restaurant = await prisma.restaurant.findUnique({
+        where: {
+            id
+        }
+    });
 
-    return restaurants[0] || null;
+    return normalizarRestaurante(restaurant);
 }
 
 async function createRestaurant(data) {
-    const [result] = await pool.execute(
-        `
-            INSERT INTO restaurants
-                (name, category, rating, description, address, phone)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `,
-        [
-            data.name,
-            data.category,
-            data.rating,
-            data.description,
-            data.address,
-            data.phone
-        ]
-    );
+    const restaurant = await prisma.restaurant.create({
+        data
+    });
 
-    return findRestaurantById(result.insertId);
+    return normalizarRestaurante(restaurant);
 }
 
 module.exports = {
