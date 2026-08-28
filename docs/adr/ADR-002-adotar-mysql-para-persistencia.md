@@ -84,3 +84,7 @@ Esta decisão deve ser revista quando:
 ## Possível evolução
 
 Uma migração futura para PostgreSQL continua possível caso apareçam requisitos que justifiquem a mudança. Essa decisão deverá ser avaliada com evidências e registrada em um novo ADR, preservando o histórico deste documento.
+
+## Evolução da camada de acesso
+
+O MySQL continua aceito como banco de dados do EasyFood. Posteriormente, a estratégia de acesso direto por `mysql2` evoluiu para o Prisma ORM, conforme o [ADR-003 - Adotar Prisma como ORM](ADR-003-adotar-prisma-como-orm.md). Essa evolução substitui o conector usado pela aplicação, mas não substitui a decisão arquitetural de manter o MySQL.

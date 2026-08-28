@@ -1,31 +1,31 @@
 const dotenv = require("dotenv");
-const mysql = require("mysql2/promise");
+const { PrismaClient } = require("@prisma/client");
 
 dotenv.config({ quiet: true });
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    decimalNumbers: true
-});
+const prisma = new PrismaClient();
 
 async function testConnection() {
-    const connection = await pool.getConnection();
+    await prisma.$connect();
+}
 
+async function disconnectDatabase() {
+    await prisma.$disconnect();
+}
+
+async function closeOnSignal() {
     try {
-        await connection.ping();
+        await disconnectDatabase();
     } finally {
-        connection.release();
+        process.exit(0);
     }
 }
 
+process.once("SIGINT", closeOnSignal);
+process.once("SIGTERM", closeOnSignal);
+
 module.exports = {
-    pool,
-    testConnection
+    prisma,
+    testConnection,
+    disconnectDatabase
 };

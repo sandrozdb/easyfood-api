@@ -11,7 +11,8 @@ Nesta sprint, a API foi padronizada com as rotas em inglês e evoluiu do armazen
 - Node.js
 - Express
 - MySQL 8
-- mysql2
+- Prisma ORM
+- Prisma Client
 - dotenv
 - HTML, CSS e JavaScript
 
@@ -23,7 +24,7 @@ Arquitetura anterior:
 
 Arquitetura atual:
 
-`Front-end → API Node.js/Express → mysql2 → MySQL`
+`Front-end → API Node.js/Express → repository → Prisma ORM → MySQL`
 
 ## Como executar
 
@@ -53,27 +54,40 @@ notepad ".env"
 Preencha as configurações locais:
 
 ```dotenv
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=coloque_sua_senha_local
-DB_NAME=easyfood
 PORT=3000
+DATABASE_URL="mysql://usuario:senha@localhost:3306/easyfood"
 ```
 
-Nunca versione o `.env` nem coloque credenciais reais no `.env.example`.
+Nunca versione o `.env` nem coloque credenciais reais no `.env.example`. Caracteres especiais no usuário ou na senha devem ser codificados para uso em URL.
 
-### 3. Criar o banco, a tabela e os dados iniciais
+### 3. Preparar o banco existente
 
-Com o serviço MySQL em execução, use:
+O Prisma foi configurado por introspecção da tabela `restaurants` já existente. Para atualizar o modelo a partir do banco e gerar o Client:
+
+```powershell
+npm run prisma:pull
+npm run prisma:generate
+```
+
+Em um ambiente novo, crie primeiro o banco e a tabela executando `database/schema.sql` pelo MySQL Workbench. Esse arquivo foi preservado como referência histórica e não é executado automaticamente pelo Prisma.
+
+### 4. Executar o seed Prisma
+
+O mecanismo oficial de seed é `prisma/seed.js`:
+
+```powershell
+npm run db:seed
+```
+
+O seed consulta a chave única formada por nome, endereço e telefone antes de criar cada restaurante inicial. Ele não atualiza restaurantes existentes, não duplica dados e não consome IDs quando os oito registros já existem.
+
+O comando abaixo gera o Client e executa o seed em sequência:
 
 ```powershell
 npm run db:setup
 ```
 
-Esse comando executa `database/schema.sql` e `database/seed.sql`. O schema é idempotente, e o seed utiliza a identidade formada por nome, endereço e telefone para evitar a duplicação dos oito restaurantes iniciais.
-
-### 4. Iniciar a aplicação
+### 5. Iniciar a aplicação
 
 ```powershell
 npm start
@@ -130,6 +144,10 @@ Para testar a persistência manualmente:
 
 O projeto disponibiliza somente GET e POST nesta etapa. PUT e DELETE ainda não fazem parte da API.
 
+## Prisma e SQL direto
+
+O repository utiliza Prisma para `findMany`, `findUnique` e `create`, mantendo o `server.js` independente dos detalhes do banco. Os arquivos em `database/` preservam o schema e o seed SQL anteriores como documentação histórica. SQL direto poderá ser usado futuramente apenas em consultas que realmente exijam recursos específicos, de forma isolada, parametrizada e documentada.
+
 ## Interface
 
 As páginas de listagem e cadastro usam a mesma moldura de celular no desktop: 390px de largura, 844px de altura, borda de 8px e cantos de 42px. O conteúdo possui uma única rolagem interna, mantendo a moldura fixa quando novos restaurantes são exibidos. Em telas de até 430px, a interface ocupa toda a largura e a altura disponível do dispositivo, sem borda ou cantos arredondados.
@@ -138,6 +156,7 @@ As páginas de listagem e cadastro usam a mesma moldura de celular no desktop: 3
 
 - [ADR-001 - Armazenar restaurantes em memória](docs/adr/ADR-001-armazenar-restaurantes-em-memoria.md)
 - [ADR-002 - Adotar MySQL para persistência](docs/adr/ADR-002-adotar-mysql-para-persistencia.md)
+- [ADR-003 - Adotar Prisma como ORM](docs/adr/ADR-003-adotar-prisma-como-orm.md)
 - [Hipótese de evolução da persistência](docs/hipotese-persistencia.md)
 
 > O `.env` contém configurações locais e nunca deve ser versionado. O arquivo `.env.example` deve conter somente valores de exemplo, sem senhas reais.
