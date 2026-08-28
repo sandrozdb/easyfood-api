@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">EasyFood — API de restaurantes</title>
+  <desc id="desc">Capa do projeto EasyFood com Node.js, Express, Prisma e MySQL</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#7C2D12"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FF7A35"/>
+      <stop offset="1" stop-color="#FF4B16"/>
+    </linearGradient>
+    <filter id="shadow" x="790" y="20" width="350" height="340" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity=".28"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="360" rx="28" fill="url(#bg)"/>
+  <circle cx="1130" cy="40" r="190" fill="#FF6B2C" opacity=".13"/>
+  <circle cx="1050" cy="340" r="165" fill="#FDBA74" opacity=".10"/>
+
+  <text x="70" y="105" fill="#FDBA74" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">API REST • ARQUITETURA • PERSISTÊNCIA</text>
+  <text x="70" y="180" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700">Easy<tspan fill="#FF5A1F">Food</tspan></text>
+  <text x="70" y="235" fill="#F3F4F6" font-family="Arial, Helvetica, sans-serif" font-size="28">Consulta e cadastro de restaurantes</text>
+
+  <g font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">
+    <rect x="70" y="275" width="105" height="42" rx="21" fill="#339933"/>
+    <text x="122.5" y="302" text-anchor="middle">NODE.JS</text>
+    <rect x="190" y="275" width="105" height="42" rx="21" fill="#111827" stroke="#FFFFFF" stroke-opacity=".35"/>
+    <text x="242.5" y="302" text-anchor="middle">EXPRESS</text>
+    <rect x="310" y="275" width="100" height="42" rx="21" fill="#2D3748"/>
+    <text x="360" y="302" text-anchor="middle">PRISMA</text>
+    <rect x="425" y="275" width="95" height="42" rx="21" fill="#00758F"/>
+    <text x="472.5" y="302" text-anchor="middle">MYSQL</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="875" y="34" width="210" height="292" rx="34" fill="#171717"/>
+    <rect x="884" y="43" width="192" height="274" rx="27" fill="#FFFFFF"/>
+    <rect x="950" y="50" width="60" height="8" rx="4" fill="#D1D5DB"/>
+    <text x="980" y="88" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Easy<tspan fill="#FF5A1F">Food</tspan></text>
+    <rect x="900" y="105" width="160" height="54" rx="14" fill="url(#orange)"/>
+    <text x="914" y="128" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">Encontre seu próximo</text>
+    <text x="914" y="143" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">restaurante</text>
+    <rect x="900" y="172" width="160" height="28" rx="9" fill="#F9FAFB" stroke="#E5E7EB"/>
+    <circle cx="916" cy="186" r="5" fill="none" stroke="#9CA3AF" stroke-width="2"/>
+    <path d="M920 190L924 194" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+    <g>
+      <rect x="900" y="211" width="160" height="38" rx="10" fill="#FFFFFF" stroke="#E5E7EB"/>
+      <rect x="910" y="219" width="24" height="22" rx="7" fill="#FFF1E8"/>
+      <circle cx="922" cy="230" r="6" fill="#FF6B2C"/>
+      <text x="942" y="227" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700">Lapittosa</text>
+      <text x="942" y="240" fill="#F59E0B" font-family="Arial, Helvetica, sans-serif" font-size="9">★ 4.5</text>
+    </g>
+    <g>
+      <rect x="900" y="257" width="160" height="38" rx="10" fill="#FFFFFF" stroke="#E5E7EB"/>
+      <rect x="910" y="265" width="24" height="22" rx="7" fill="#FFF1E8"/>
+      <circle cx="922" cy="276" r="6" fill="#FF6B2C"/>
+      <text x="942" y="273" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700">Lanchonete do Zé</text>
+      <text x="942" y="286" fill="#F59E0B" font-family="Arial, Helvetica, sans-serif" font-size="9">★ 5.0</text>
+    </g>
+  </g>
+
+  <path d="M1115 120H1190" stroke="#FDBA74" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+  <circle cx="1152" cy="120" r="9" fill="#FF6B2C"/>
+  <path d="M1115 180H1210" stroke="#FDBA74" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+  <circle cx="1180" cy="180" r="9" fill="#FF6B2C"/>
+  <path d="M1115 240H1175" stroke="#FDBA74" stroke-width="4" stroke-linecap="round" opacity=".35"/>
+  <circle cx="1140" cy="240" r="9" fill="#FF6B2C"/>
+</svg>
