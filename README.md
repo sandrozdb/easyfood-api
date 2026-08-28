@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/cover.svg" alt="EasyFood — API de restaurantes" width="100%">
+</p>
+
 # EasyFood
 
 O EasyFood é um MVP acadêmico para consultar e cadastrar restaurantes. A interface permite pesquisar por nome ou categoria, filtrar a listagem e cadastrar estabelecimentos com validação dos dados.
