@@ -26,9 +26,34 @@ Arquitetura anterior:
 
 `Front-end → API Node.js/Express → array em memória`
 
-Arquitetura atual:
+Arquitetura atual, organizada como monólito modular:
 
-`Front-end → API Node.js/Express → repository → Prisma ORM → MySQL`
+`Front-end → Routes → Controller → Service → Repository → Prisma ORM → MySQL`
+
+## Organização do código
+
+O domínio de restaurantes está isolado em `src/modules/restaurants`. Cada camada possui uma responsabilidade:
+
+- `server.js`: inicia o servidor HTTP.
+- `src/app.js`: configura o Express e registra os módulos.
+- `restaurantRoutes.js`: define as rotas GET e POST.
+- `restaurantController.js`: recebe `req`, chama o service e monta `res`.
+- `restaurantService.js`: concentra as regras de negócio e validações.
+- `restaurantRepository.js`: acessa o MySQL por meio do Prisma.
+- `src/config/database.js`: configura o Prisma Client.
+
+```text
+src/
+├── app.js
+├── config/
+│   └── database.js
+└── modules/
+    └── restaurants/
+        ├── restaurantRoutes.js
+        ├── restaurantController.js
+        ├── restaurantService.js
+        └── restaurantRepository.js
+```
 
 ## Como executar
 
@@ -158,9 +183,16 @@ As páginas de listagem e cadastro usam a mesma moldura de celular no desktop: 3
 
 ## Documentação
 
+Os testes automatizados das regras de negócio podem ser executados com:
+
+```powershell
+npm test
+```
+
 - [ADR-001 - Armazenar restaurantes em memória](docs/adr/ADR-001-armazenar-restaurantes-em-memoria.md)
 - [ADR-002 - Adotar MySQL para persistência](docs/adr/ADR-002-adotar-mysql-para-persistencia.md)
 - [ADR-003 - Adotar Prisma como ORM](docs/adr/ADR-003-adotar-prisma-como-orm.md)
+- [ADR-004 - Organizar o EasyFood como monólito modular](docs/adr/ADR-004-organizar-como-monolito-modular.md)
 - [Hipótese de evolução da persistência](docs/hipotese-persistencia.md)
 
 > O `.env` contém configurações locais e nunca deve ser versionado. O arquivo `.env.example` deve conter somente valores de exemplo, sem senhas reais.
