@@ -1,13 +1,13 @@
-const { prisma } = require("../config/database");
+const { prisma } = require("../../config/database");
 
-function normalizarRestaurante(restaurante) {
-    if (!restaurante) {
+function normalizeRestaurant(restaurant) {
+    if (!restaurant) {
         return null;
     }
 
     return {
-        ...restaurante,
-        rating: Number(restaurante.rating)
+        ...restaurant,
+        rating: Number(restaurant.rating)
     };
 }
 
@@ -18,7 +18,7 @@ async function listRestaurants() {
         }
     });
 
-    return restaurants.map(normalizarRestaurante);
+    return restaurants.map(normalizeRestaurant);
 }
 
 async function findRestaurantById(id) {
@@ -28,15 +28,12 @@ async function findRestaurantById(id) {
         }
     });
 
-    return normalizarRestaurante(restaurant);
+    return normalizeRestaurant(restaurant);
 }
 
 async function createRestaurant(data) {
-    const restaurant = await prisma.restaurant.create({
-        data
-    });
-
-    return normalizarRestaurante(restaurant);
+    const restaurant = await prisma.restaurant.create({ data });
+    return normalizeRestaurant(restaurant);
 }
 
 module.exports = {
