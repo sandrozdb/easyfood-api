@@ -32,7 +32,7 @@ Arquitetura atual, organizada como monólito modular:
 
 ## Organização do código
 
-O domínio de restaurantes está isolado em `src/modules/restaurants`. Cada camada possui uma responsabilidade:
+O domínio de restaurantes está isolado em `src/modules/restaurants`. O futuro domínio de autenticação está planejado em `src/modules/auth`, mas ainda não possui código executável. Cada camada possui uma responsabilidade:
 
 - `server.js`: inicia o servidor HTTP.
 - `src/app.js`: configura o Express e registra os módulos.
@@ -48,6 +48,8 @@ src/
 ├── config/
 │   └── database.js
 └── modules/
+    ├── auth/
+    │   └── README.md
     └── restaurants/
         ├── restaurantRoutes.js
         ├── restaurantController.js
@@ -193,6 +195,8 @@ npm test
 - [ADR-002 - Adotar MySQL para persistência](docs/adr/ADR-002-adotar-mysql-para-persistencia.md)
 - [ADR-003 - Adotar Prisma como ORM](docs/adr/ADR-003-adotar-prisma-como-orm.md)
 - [ADR-004 - Organizar o EasyFood como monólito modular](docs/adr/ADR-004-organizar-como-monolito-modular.md)
+- [ADR-005 - Planejar autenticação com AWS Cognito](docs/adr/ADR-005-planejar-autenticacao-com-aws-cognito.md)
+- [Pesquisa de alternativas de autenticação](docs/pesquisa-autenticacao.md)
 - [Hipótese de evolução da persistência](docs/hipotese-persistencia.md)
 
 > O `.env` contém configurações locais e nunca deve ser versionado. O arquivo `.env.example` deve conter somente valores de exemplo, sem senhas reais.
