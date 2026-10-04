@@ -1,8 +1,9 @@
 {
-  "name": "projeto-easyfood-aula1",
+  "name": "easyfood-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "API acadêmica de restaurantes com Node.js, Express, Prisma ORM, MySQL e arquitetura modular documentada por ADRs.",
+  "main": "server.js",
   "scripts": {
     "db:setup": "npm run prisma:generate && npm run db:seed",
     "db:seed": "node prisma/seed.js",
@@ -11,9 +12,17 @@
     "start": "node server.js",
     "test": "node --test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "nodejs",
+    "express",
+    "prisma",
+    "mysql",
+    "rest-api",
+    "architecture",
+    "adr"
+  ],
+  "author": "Sandro Ferreira",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "6.12.0",
