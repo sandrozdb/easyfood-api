@@ -1,4 +1,6 @@
 const restaurantRepository = require("./restaurantRepository");
+const activityService = require("../activity/activityService");
+const emailService = require("../email/emailService");
 
 const ALLOWED_CATEGORIES = [
     "Pizza",
@@ -107,9 +109,14 @@ async function listRestaurants() {
     return restaurantRepository.listRestaurants();
 }
 
-async function createRestaurant(input) {
+async function createRestaurant(input, user, repo = restaurantRepository, audit = activityService, context = {}, email = emailService) {
     const restaurantData = prepareRestaurantData(input);
-    return restaurantRepository.createRestaurant(restaurantData);
+    const restaurant = await repo.createRestaurant({ ...restaurantData, owner_id: user?.role === "restaurante" ? user.id : null });
+    await audit.recordBestEffort({ userId: user?.id, action: "restaurant.create", entityType: "restaurant", entityId: restaurant.id,
+        metadata: { restaurantId: restaurant.id }, ipAddress: context.ipAddress });
+    await email.sendRestaurantCreated({ actorId: user?.id, entityId: restaurant.id,
+        recipient: user?.role === "restaurante" ? { email: user.email, name: user.name } : null, restaurant }, context.emailProvider, context.emailAudit);
+    return restaurant;
 }
 
 async function findRestaurantById(id) {

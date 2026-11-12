@@ -1,35 +1,12 @@
-# Módulo de autenticação - planejamento
+# Módulo de autenticação
 
-## Status
+Integração Cognito no monólito modular:
+- authProvider.js: verifica access tokens e consulta a identidade no Cognito.
+- authRoutes.js: configuração pública de login e perfil autenticado.
+- ../../middlewares: autenticação e autorização por perfil.
+- ../users: provisionamento e administração de usuários locais.
 
-Planejado. Nenhuma rota de autenticação ou controle de acesso foi implementado nesta etapa.
+Após a validação criptográfica do access token, `userRepository` deriva o perfil somente de `cognito:groups` reconhecidos e sincroniza `users.role` quando houver diferença. Prioridade: `admin`, depois `restaurante`, depois `cliente`; ausência de grupo reconhecido usa `cliente`. O frontend nunca escolhe o próprio perfil.
 
-## Objetivo
-
-Concentrar o cadastro de usuários, login, encerramento de sessão, recuperação de acesso e autorização da EasyFood sem misturar essas responsabilidades com o módulo de restaurantes.
-
-## Fronteira prevista
-
-Quando implementado, o módulo poderá conter:
-
-```text
-auth/
-├── authRoutes.js
-├── authController.js
-├── authService.js
-└── authProvider.js
-```
-
-- `authRoutes.js`: define os caminhos HTTP de autenticação.
-- `authController.js`: recebe as requisições e devolve respostas HTTP.
-- `authService.js`: aplica as regras de autenticação e autorização.
-- `authProvider.js`: isola a integração com o provedor de identidade.
-
-## Decisão atual
-
-A solução planejada é integrar o AWS Cognito por meio deste módulo interno e manter a EasyFood como monólito modular. Não será criado um Auth Service separado enquanto não houver necessidade comprovada de implantação, escala ou reutilização independente.
-
-Detalhes:
-
-- [Pesquisa de alternativas](../../../docs/pesquisa-autenticacao.md)
-- [ADR-005](../../../docs/adr/ADR-005-planejar-autenticacao-com-aws-cognito.md)
+Não há senha local nem serviço separado. O frontend usa Google via Cognito com PKCE.
+Veja [guia](../../../docs/autenticacao-cognito-google.md) e [ADR-006](../../../docs/adr/ADR-006-autenticacao-cognito-google-rbac.md).

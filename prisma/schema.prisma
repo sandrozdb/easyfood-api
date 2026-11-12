@@ -18,6 +18,79 @@ model Restaurant {
   phone       String   @db.VarChar(15)
   created_at  DateTime @default(now()) @db.Timestamp(0)
 
+  owner_id    Int?     @unique(map: "uq_restaurants_owner")
+  owner       User?    @relation(fields: [owner_id], references: [id], onDelete: Restrict)
+  dishes      Dish[]
+  reviews     Review[]
+
   @@unique([name, address, phone], map: "uq_restaurants_identity")
   @@map("restaurants")
+}
+
+model Dish {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(120)
+  category     String     @db.VarChar(60)
+  description  String     @db.VarChar(500)
+  price        Decimal    @db.Decimal(10, 2)
+  imageUrl     String?    @map("image_url") @db.VarChar(2048)
+  imageKey     String?    @map("image_key") @db.VarChar(512)
+  available    Boolean    @default(true)
+  restaurantId Int        @map("restaurant_id")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamp(0)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([restaurantId], map: "idx_dishes_restaurant_id")
+  @@map("dishes")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  cognito_sub String   @unique @db.VarChar(128)
+  email       String?  @db.VarChar(254)
+  name        String?  @db.VarChar(120)
+  role        String   @default("cliente") @db.VarChar(20)
+  active      Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+  profileImageKey String? @map("profile_image_key") @db.VarChar(512)
+  restaurant  Restaurant?
+  activityLogs ActivityLog[]
+  reviews      Review[]
+
+  @@map("users")
+}
+
+model Review {
+  id           Int        @id @default(autoincrement())
+  userId       Int        @map("user_id")
+  restaurantId Int        @map("restaurant_id")
+  rating       Int        @db.UnsignedTinyInt
+  comment      String?    @db.VarChar(500)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamp(0)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, restaurantId], map: "uq_reviews_user_restaurant")
+  @@index([restaurantId, createdAt], map: "idx_reviews_restaurant_created")
+  @@map("reviews")
+}
+
+model ActivityLog {
+  id         BigInt   @id @default(autoincrement())
+  userId     Int?     @map("user_id")
+  action     String   @db.VarChar(80)
+  entityType String   @map("entity_type") @db.VarChar(60)
+  entityId   Int?     @map("entity_id")
+  metadata   Json?
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([createdAt], map: "idx_activity_logs_created_at")
+  @@index([userId], map: "idx_activity_logs_user_id")
+  @@index([action], map: "idx_activity_logs_action")
+  @@index([entityType, entityId], map: "idx_activity_logs_entity")
+  @@map("activity_logs")
 }

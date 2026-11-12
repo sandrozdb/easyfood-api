@@ -11,6 +11,7 @@
     <title>EasyFood</title>
 
     <style>
+        [hidden] { display: none !important; }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -215,6 +216,9 @@
             box-shadow: 0 9px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .nome-restaurante { color: inherit; text-decoration: none; }
+        .nome-restaurante:hover { color: #e85d15; text-decoration: underline; }
+
         .icone {
             display: flex;
             width: 55px;
@@ -369,7 +373,7 @@
 
                 <a
                     href="/cadastro.html"
-                    class="botao-cadastro"
+                    class="botao-cadastro" hidden
                     aria-label="Cadastrar restaurante"
                     title="Cadastrar restaurante"
                 >
@@ -420,6 +424,8 @@
         </div>
     </main>
 
+    <script src="/auth.js"></script>
+    <script src="/navigation.js" defer></script>
     <script>
         let restaurantes = [];
         let categoriaSelecionada = "Todos";
@@ -436,6 +442,12 @@
 
         const quantidade =
             document.getElementById("quantidade");
+
+        function escaparHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            })[character]);
+        }
 
         function escolherIcone(categoria) {
             const icones = {
@@ -462,19 +474,15 @@
                 )
             ];
 
-            categorias.innerHTML = nomes.map(nome => `
-                <button
-                    type="button"
-                    class="categoria ${
-                        nome === categoriaSelecionada
-                            ? "ativa"
-                            : ""
-                    }"
-                    onclick="selecionarCategoria('${nome}')"
-                >
-                    ${nome}
-                </button>
-            `).join("");
+            categorias.replaceChildren();
+            for (const nome of nomes) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "categoria" + (nome === categoriaSelecionada ? " ativa" : "");
+                button.textContent = nome;
+                button.addEventListener("click", () => selecionarCategoria(nome));
+                categorias.append(button);
+            }
         }
 
         function selecionarCategoria(categoria) {
@@ -561,41 +569,37 @@
                         </div>
 
                         <div class="informacoes">
-                            <h3>${restaurante.name}</h3>
+                            <h3><a class="nome-restaurante" href="/restaurant.html?id=${encodeURIComponent(restaurante.id)}">${escaparHtml(restaurante.name)}</a></h3>
 
                             <p class="categoria-restaurante">
-                                ${restaurante.category}
+                                ${escaparHtml(restaurante.category)}
                                 • 20–30 min
                             </p>
 
                             <p class="descricao">
                                 ${
-                                    restaurante.description ||
-                                    "Descrição não informada."
+                                    escaparHtml(restaurante.description ||
+                                    "Descrição não informada.")
                                 }
                             </p>
 
                             <p class="detalhe">
                                 📍 ${
-                                    restaurante.address ||
-                                    "Endereço não informado"
+                                    escaparHtml(restaurante.address ||
+                                    "Endereço não informado")
                                 }
                             </p>
 
                             <p class="detalhe">
                                 📞 ${
-                                    restaurante.phone ||
-                                    "Telefone não informado"
+                                    escaparHtml(restaurante.phone ||
+                                    "Telefone não informado")
                                 }
                             </p>
 
                             <div class="rodape-card">
                                 <span class="nota">
-                                    ⭐ ${
-                                        Number(
-                                            restaurante.rating
-                                        ).toFixed(1)
-                                    }
+                                    ${restaurante.reviewCount ? `${Number(restaurante.averageRating).toFixed(1)} ★ (${restaurante.reviewCount})` : "Sem avaliações"}
                                 </span>
                             </div>
                         </div>

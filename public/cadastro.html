@@ -11,6 +11,7 @@
     <title>Cadastrar restaurante | EasyFood</title>
 
     <style>
+        [hidden] { display: none !important; }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -326,7 +327,7 @@
                 Os campos identificados com * são obrigatórios.
             </div>
 
-            <form id="formulario-cadastro">
+            <form id="formulario-cadastro" hidden>
                 <div class="campo">
                     <label for="name">
                         Nome do restaurante *
@@ -505,6 +506,8 @@
         </div>
     </main>
 
+    <script src="/auth.js"></script>
+    <script src="/registration.js" defer></script>
     <script>
         const formulario =
             document.getElementById("formulario-cadastro");
@@ -855,11 +858,11 @@
             };
 
             botaoCadastrar.disabled = true;
-            botaoCadastrar.textContent = "Cadastrando...";
+            botaoCadastrar.textContent = window.editRestaurantId ? "Salvando..." : "Cadastrando...";
 
             try {
-                const resposta = await fetch("/restaurants", {
-                    method: "POST",
+                const resposta = await EasyAuth.api(window.editRestaurantId ? "/restaurants/" + window.editRestaurantId : "/restaurants", {
+                    method: window.editRestaurantId ? "PUT" : "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
@@ -882,8 +885,9 @@
 
                 mensagem.className = "mensagem sucesso";
                 mensagem.textContent =
-                    "Restaurante cadastrado com sucesso!";
+                    window.editRestaurantId ? "Restaurante atualizado com sucesso!" : "Restaurante cadastrado com sucesso!";
 
+                if (window.editRestaurantId) { location.assign("/dashboard.html"); return; }
                 formulario.reset();
                 contador.textContent = "0/160";
 
@@ -906,7 +910,7 @@
             } finally {
                 botaoCadastrar.disabled = false;
                 botaoCadastrar.textContent =
-                    "Cadastrar restaurante";
+                    window.editRestaurantId ? "Salvar alterações" : "Cadastrar restaurante";
             }
         });
     </script>

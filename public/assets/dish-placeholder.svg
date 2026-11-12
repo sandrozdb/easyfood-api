@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="title description">
+  <title id="title">Prato sem imagem</title><desc id="description">Placeholder do EasyFood para prato sem fotografia</desc>
+  <rect width="800" height="450" rx="36" fill="#fff1e8"/><circle cx="400" cy="218" r="118" fill="#fff" stroke="#ee641b" stroke-width="14"/><circle cx="400" cy="218" r="75" fill="#ffe0cf"/>
+  <path d="M235 105v225M215 105v88c0 30 40 30 40 0v-88M565 105v225M565 105c52 52 52 112 0 142" fill="none" stroke="#a63c07" stroke-width="18" stroke-linecap="round"/>
+  <text x="400" y="390" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#a63c07">EasyFood</text>
+</svg>

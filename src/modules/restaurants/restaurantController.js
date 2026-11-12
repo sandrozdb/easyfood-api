@@ -15,13 +15,14 @@ async function listRestaurants(req, res) {
 
 async function createRestaurant(req, res) {
     try {
-        const restaurant = await restaurantService.createRestaurant(req.body);
+        const restaurant = await restaurantService.createRestaurant(req.body || {}, req.user, undefined, undefined, { ipAddress: req.ip });
 
         return res.status(201).json({
             message: "Restaurante cadastrado com sucesso!",
             restaurante: restaurant
         });
     } catch (error) {
+        if (error.code === "P2002") return res.status(409).json({ message: "Restaurante já cadastrado ou usuário já possui restaurante." });
         if (error instanceof RestaurantValidationError) {
             return res.status(400).json({
                 message: "Existem dados fora do padrão.",
