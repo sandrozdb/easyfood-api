@@ -119,6 +119,12 @@ Clientes autenticados podem salvar restaurantes e consultar sua lista pessoal. A
 
 A migration aditiva `007-create-favorites.sql` cria a relação N:N entre clientes e restaurantes. A restrição única impede duplicidade e a página `/favorites.html` exibe os restaurantes salvos com avaliação agregada.
 
+## Busca, filtros e ordenação
+
+`GET /restaurants` permanece público e aceita os parâmetros opcionais `search`, `category`, `minRating` (`3`, `4` ou `4.5`) e `sort` (`name_asc`, `name_desc`, `rating_desc`, `reviews_desc` ou `recent_desc`). Exemplo: `GET /restaurants?search=pizza&category=Pizza&minRating=4&sort=rating_desc`.
+
+A página inicial combina os filtros, mantém o estado na URL e aplica debounce de 300 ms na busca. A nota mínima e as ordenações por avaliação usam `averageRating` e `reviewCount` derivados de Reviews, não o campo legado `rating`.
+
 ## Imagens privadas
 
 Fluxo oficial:
@@ -168,7 +174,7 @@ npm audit
 npm audit --omit=dev
 ```
 
-A suíte possui **211 testes** cobrindo validações, restaurantes, Cognito, JWT, RBAC, ownership, IDOR, pratos, S3, Multer, Sharp, ImageService, foto de perfil, Reviews, Activity Log, EmailService e frontend. A CI executa os testes em pushes e pull requests para `main`.
+A suíte possui **289 testes** cobrindo validações, restaurantes, busca e filtros, Cognito, JWT, RBAC, ownership, IDOR, pratos, S3, Multer, Sharp, ImageService, foto de perfil, Reviews, Favoritos, Activity Log, EmailService e frontend. A CI executa os testes em pushes e pull requests para `main`.
 
 ## Decisões arquiteturais
 

@@ -13,14 +13,19 @@ function normalizeRestaurant(restaurant, review = {}) {
     };
 }
 
-async function listRestaurants() {
+async function listRestaurants(filters = {}) {
+    const where = {};
+    if (filters.search) where.name = { contains: filters.search };
+    if (filters.category) where.category = filters.category;
     const restaurants = await prisma.restaurant.findMany({
+        where,
         orderBy: {
             id: "asc"
         }
     });
 
-    const grouped = await prisma.review.groupBy({ by: ["restaurantId"], _avg: { rating: true }, _count: { rating: true } });
+    const restaurantIds = restaurants.map(item => item.id);
+    const grouped = restaurantIds.length ? await prisma.review.groupBy({ by: ["restaurantId"], where: { restaurantId: { in: restaurantIds } }, _avg: { rating: true }, _count: { rating: true } }) : [];
     const reviews = new Map(grouped.map(item => [item.restaurantId, { averageRating: Number(Number(item._avg.rating).toFixed(1)), reviewCount: item._count.rating }]));
     return restaurants.map(row => normalizeRestaurant(row, reviews.get(row.id)));
 }

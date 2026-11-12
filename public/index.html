@@ -393,10 +393,15 @@
                 type="search"
                 id="busca"
                 class="busca"
-                placeholder="🔎 Buscar por nome ou categoria..."
+                placeholder="Buscar restaurante..."
             >
 
-            <div id="categorias" class="categorias"></div>
+            <div class="categorias" aria-label="Filtros de restaurantes">
+                <select id="categoria" aria-label="Categoria"><option value="">Todas as categorias</option></select>
+                <select id="nota-minima" aria-label="Avaliação mínima"><option value="">Qualquer nota</option><option value="3">3+</option><option value="4">4+</option><option value="4.5">4.5+</option></select>
+                <select id="ordenacao" aria-label="Ordenar por"><option value="default">Padrão</option><option value="name_asc">Nome A-Z</option><option value="name_desc">Nome Z-A</option><option value="rating_desc">Melhor avaliação</option><option value="reviews_desc">Maior número de avaliações</option></select>
+                <button type="button" id="limpar-filtros">Limpar filtros</button>
+            </div>
 
             <div class="cabecalho-lista">
                 <h2 class="titulo-lista">
@@ -426,7 +431,7 @@
 
     <script src="/auth.js"></script>
     <script src="/navigation.js" defer></script>
-    <script>
+    <script src="/restaurant-list.js">
         let restaurantes = [];
         let categoriaSelecionada = "Todos";
         let quantidadeVisivel = 3;

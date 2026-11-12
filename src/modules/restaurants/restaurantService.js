@@ -25,6 +25,39 @@ class RestaurantValidationError extends Error {
     }
 }
 
+class RestaurantFilterError extends Error {
+    constructor(errors) {
+        super("Parâmetros de busca inválidos.");
+        this.name = "RestaurantFilterError";
+        this.errors = errors;
+    }
+}
+
+const ALLOWED_MIN_RATINGS = new Set([3, 4, 4.5]);
+const ALLOWED_SORTS = new Set(["default", "name_asc", "name_desc", "rating_desc", "reviews_desc", "recent_desc"]);
+
+function normalizeRestaurantFilters(query = {}) {
+    const errors = [];
+    const onlyString = (value, field, max) => {
+        if (value === undefined || value === "") return undefined;
+        if (typeof value !== "string") { errors.push(`${field} deve ser texto.`); return undefined; }
+        const normalized = value.trim().replace(/\s+/g, " ");
+        if (normalized.length > max) errors.push(`${field} deve ter no máximo ${max} caracteres.`);
+        return normalized || undefined;
+    };
+    const search = onlyString(query.search, "search", 60);
+    const category = onlyString(query.category, "category", 30);
+    let minRating;
+    if (query.minRating !== undefined && query.minRating !== "") {
+        minRating = Number(query.minRating);
+        if (!ALLOWED_MIN_RATINGS.has(minRating)) errors.push("minRating deve ser 3, 4 ou 4.5.");
+    }
+    const sort = query.sort === undefined || query.sort === "" ? "default" : query.sort;
+    if (typeof sort !== "string" || !ALLOWED_SORTS.has(sort)) errors.push("sort inválido.");
+    if (errors.length) throw new RestaurantFilterError(errors);
+    return { search, category, minRating, sort };
+}
+
 function parseRating(receivedRating, errors) {
     const ratingWasNotProvided =
         receivedRating === undefined ||
@@ -105,8 +138,18 @@ function prepareRestaurantData(input = {}) {
     };
 }
 
-async function listRestaurants() {
-    return restaurantRepository.listRestaurants();
+async function listRestaurants(query = {}, repo = restaurantRepository) {
+    const filters = normalizeRestaurantFilters(query);
+    const restaurants = await repo.listRestaurants(filters);
+    const filtered = filters.minRating === undefined ? restaurants : restaurants.filter(item => item.reviewCount > 0 && item.averageRating >= filters.minRating);
+    const comparisons = {
+        name_asc: (a, b) => a.name.localeCompare(b.name, "pt-BR"),
+        name_desc: (a, b) => b.name.localeCompare(a.name, "pt-BR"),
+        rating_desc: (a, b) => b.averageRating - a.averageRating || b.reviewCount - a.reviewCount || a.name.localeCompare(b.name, "pt-BR"),
+        reviews_desc: (a, b) => b.reviewCount - a.reviewCount || b.averageRating - a.averageRating || a.name.localeCompare(b.name, "pt-BR"),
+        recent_desc: (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    };
+    return comparisons[filters.sort] ? [...filtered].sort(comparisons[filters.sort]) : filtered;
 }
 
 async function createRestaurant(input, user, repo = restaurantRepository, audit = activityService, context = {}, email = emailService) {
@@ -129,5 +172,7 @@ module.exports = {
     findRestaurantById,
     prepareRestaurantData,
     RestaurantValidationError,
+    RestaurantFilterError,
+    normalizeRestaurantFilters,
     ALLOWED_CATEGORIES
 };

@@ -3,9 +3,12 @@ const { RestaurantValidationError } = restaurantService;
 
 async function listRestaurants(req, res) {
     try {
-        const restaurants = await restaurantService.listRestaurants();
+        const restaurants = await restaurantService.listRestaurants(req.query);
         return res.status(200).json(restaurants);
     } catch (error) {
+        if (error instanceof restaurantService.RestaurantFilterError) {
+            return res.status(400).json({ message: error.message, errors: error.errors });
+        }
         console.error("Falha interna ao consultar os restaurantes.");
         return res.status(500).json({
             message: "Não foi possível consultar os restaurantes."
