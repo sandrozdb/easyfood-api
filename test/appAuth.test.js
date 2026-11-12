@@ -12,6 +12,7 @@ const row = { id:10, owner_id:2, name:"Pizza Teste",category:"Pizza",rating:4.5,
  description:"Descrição de restaurante de teste.",address:"Rua dos Testes, 100",phone:"(11) 99999-9999",created_at:new Date(0) };
 let created;
 prisma.restaurant.findMany = async () => [row];
+prisma.review.groupBy = async () => [];
 prisma.restaurant.findUnique = async ({where}) => where.id === 10 ? row : null;
 prisma.restaurant.create = async ({data}) => { created=data; return {...row,...data}; };
 prisma.restaurant.updateMany = async ({where}) => ({count: where.id === 10 && (where.owner_id === undefined || where.owner_id === 2) ? 1 : 0});
