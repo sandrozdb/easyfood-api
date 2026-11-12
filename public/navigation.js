@@ -8,6 +8,10 @@
         if (user) {
             link.href = "/perfil.html"; link.textContent = "Meu perfil";
             if (register) register.hidden = !["restaurante", "admin"].includes(user.role);
+            if (user.role === "cliente" && register) {
+                const favorites = document.createElement("a"); favorites.href = "/favorites.html"; favorites.textContent = "Meus favoritos";
+                register.parentNode.insertBefore(favorites, register);
+            }
         }
     } catch { link.textContent = "Acessar minha conta"; }
 })();

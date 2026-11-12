@@ -430,6 +430,8 @@
         let restaurantes = [];
         let categoriaSelecionada = "Todos";
         let quantidadeVisivel = 3;
+        const favoritos = new Set();
+        let usuarioAtual = null;
 
         const lista =
             document.getElementById("lista-restaurantes");
@@ -606,11 +608,12 @@
 
                         <button
                             type="button"
-                            class="favorito"
-                            aria-label="Adicionar aos favoritos"
+                            class="favorito ${favoritos.has(restaurante.id) ? "ativo" : ""}"
+                            data-restaurant-id="${restaurante.id}"
+                            aria-label="${favoritos.has(restaurante.id) ? "Remover dos" : "Adicionar aos"} favoritos"
                             onclick="alternarFavorito(this)"
                         >
-                            ♡
+                            ${favoritos.has(restaurante.id) ? "♥" : "♡"}
                         </button>
                     </article>
                 `
@@ -640,13 +643,23 @@
             filtrarRestaurantes();
         }
 
-        function alternarFavorito(botao) {
-            botao.classList.toggle("ativo");
-
-            botao.textContent =
-                botao.classList.contains("ativo")
-                    ? "♥"
-                    : "♡";
+        async function alternarFavorito(botao) {
+            if (usuarioAtual?.role !== "cliente") {
+                location.href = "/login.html";
+                return;
+            }
+            const restaurantId = Number(botao.dataset.restaurantId);
+            const estavaFavorito = favoritos.has(restaurantId);
+            botao.disabled = true;
+            try {
+                const resposta = await EasyAuth.api(`/restaurants/${restaurantId}/favorite`, { method: estavaFavorito ? "DELETE" : "POST" });
+                if (!resposta.ok) throw new Error("Não foi possível atualizar o favorito.");
+                if (estavaFavorito) favoritos.delete(restaurantId); else favoritos.add(restaurantId);
+                mostrarRestaurantes(restaurantes);
+            } catch (erro) {
+                botao.disabled = false;
+                console.error(erro);
+            }
         }
 
         async function carregarRestaurantes() {
@@ -661,6 +674,13 @@
                 }
 
                 restaurantes = await resposta.json();
+                try {
+                    usuarioAtual = await EasyAuth.me();
+                    if (usuarioAtual?.role === "cliente") {
+                        const respostaFavoritos = await EasyAuth.api("/favorites/me");
+                        if (respostaFavoritos.ok) for (const item of await respostaFavoritos.json()) favoritos.add(item.id);
+                    }
+                } catch { usuarioAtual = null; }
 
                 criarCategorias();
                 mostrarRestaurantes(restaurantes);

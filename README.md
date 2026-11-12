@@ -106,6 +106,19 @@ O frontend nunca define role, proprietário ou autor. Consulte [autenticacao-cog
 
 Existe uma review por cliente/restaurante. `averageRating` e `reviewCount` são derivados das reviews; `restaurants.rating` foi preservado apenas por compatibilidade e não é a fonte de verdade.
 
+## Favoritos
+
+Clientes autenticados podem salvar restaurantes e consultar sua lista pessoal. A identidade sempre vem do JWT validado; o frontend não envia `userId`.
+
+| Rota | Acesso |
+| --- | --- |
+| `POST /restaurants/:restaurantId/favorite` | cliente |
+| `DELETE /restaurants/:restaurantId/favorite` | cliente |
+| `GET /restaurants/:restaurantId/favorite` | cliente |
+| `GET /favorites/me` | cliente |
+
+A migration aditiva `007-create-favorites.sql` cria a relação N:N entre clientes e restaurantes. A restrição única impede duplicidade e a página `/favorites.html` exibe os restaurantes salvos com avaliação agregada.
+
 ## Imagens privadas
 
 Fluxo oficial:
@@ -143,6 +156,7 @@ O histórico administrativo registra, sem dados sensíveis:
 - `dish.create/update/delete` e `dish.image.upload/replace/remove`;
 - `user.role.sync` e `user.image.upload/replace/remove`;
 - `review.create/update/delete`;
+- `favorite.add/remove`;
 - `email.sent/failed`.
 
 ## Testes e qualidade
@@ -168,6 +182,7 @@ A suíte possui **211 testes** cobrindo validações, restaurantes, Cognito, JWT
 - [ADR-008 — AWS S3](docs/adr/ADR-008-imagens-aws-s3.md)
 - [ADR-009 — EmailService e MailerSend](docs/adr/ADR-009-email-service-mailersend.md)
 - [ADR-010 — ImageService compartilhado](docs/adr/ADR-010-image-service-compartilhado.md)
+- [ADR-011 — Favoritos de restaurantes](docs/adr/ADR-011-favoritos-restaurantes.md)
 
 ## Segurança
 

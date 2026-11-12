@@ -3,6 +3,7 @@ const express = require("express");
 const restaurantRoutes = require("./modules/restaurants/restaurantRoutes");
 const { restaurantDishRoutes, dishRoutes } = require("./modules/dishes/dishRoutes");
 const { restaurantReviewRoutes, reviewRoutes } = require("./modules/reviews/reviewRoutes");
+const { restaurantFavoriteRoutes, favoriteRoutes } = require("./modules/favorites/favoriteRoutes");
 
 const app = express();
 
@@ -17,9 +18,11 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.static(path.join(__dirname, "..", "public")));
 app.use("/restaurants", restaurantDishRoutes);
 app.use("/restaurants", restaurantReviewRoutes);
+app.use("/restaurants", restaurantFavoriteRoutes);
 app.use("/restaurants", restaurantRoutes);
 app.use("/dishes", dishRoutes);
 app.use("/reviews", reviewRoutes);
+app.use("/favorites", favoriteRoutes);
 
 
 app.use("/auth", require("./modules/auth/authRoutes"));
