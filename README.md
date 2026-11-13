@@ -66,12 +66,6 @@ A captura documenta a estrutura do dashboard e seus KPIs; a lógica dos indicado
   <img src="docs/evidencias/05-admin-dashboard.webp" alt="Painel administrativo com indicadores globais da plataforma" width="350">
 </p>
 
-### CI — GitHub Actions
-
-<p align="center">
-  <img src="docs/evidencias/06-ci-github.webp" alt="Pipeline GitHub Actions concluída com sucesso" width="650">
-</p>
-
 ## Funcionalidades
 
 - listagem pública de restaurantes;
