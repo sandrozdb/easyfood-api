@@ -28,7 +28,7 @@ MVP acadêmico de descoberta e gestão de restaurantes, construído em Node.js, 
 - **Qualidade:** **355 testes aprovados, 0 falhas**, Prisma válido e `npm audit` sem vulnerabilidades na validação final local.
 - **CI:** GitHub Actions executada com sucesso na `main`.
 
-**Documentação rápida:** [Arquitetura](docs/architecture.md) · [Testes e QA](docs/testing-and-qa.md) · [Deploy](docs/deployment.md) · [Roteiro de demonstração](docs/demo-guide.md) · [Autenticação](docs/autenticacao-cognito-google.md) · [S3](docs/aws-s3-setup.md)
+**Documentação rápida:** [Arquitetura](docs/architecture.md) · [Testes e QA](docs/testing-and-qa.md) · [Roteiro de demonstração](docs/demo-guide.md) · [Autenticação](docs/autenticacao-cognito-google.md) · [S3](docs/aws-s3-setup.md)
 
 ## Funcionalidades
 
@@ -256,9 +256,6 @@ A pipeline da `main` está configurada para validar automaticamente os testes a 
 - `.env`, logs e caches locais ignorados;
 - painel admin não administra grupos Cognito nem credenciais AWS.
 
-## Deploy
-
-A aplicação depende de serviços externos e deve ser publicada somente com as variáveis e callbacks corretos. O checklist completo está em [docs/deployment.md](docs/deployment.md).
 
 ## Licença e autor
 

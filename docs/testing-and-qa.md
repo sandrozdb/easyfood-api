@@ -174,7 +174,7 @@ A suíte inclui regressões para:
 
 ## Checklist final recomendado
 
-Antes de uma entrega ou deploy:
+Antes de uma entrega:
 
 ```powershell
 npm test
@@ -185,4 +185,3 @@ git diff --check
 git status
 ```
 
-Depois do deploy, realizar smoke test dos três perfis e das integrações externas conforme `docs/deployment.md`.
