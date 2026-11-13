@@ -8,7 +8,7 @@ Não há senha local nem Client Secret no frontend. O App Client Cognito é púb
 
 O access token fica em sessionStorage, restrito à aba; ID token e refresh token não são persistidos. PKCE protege a troca do código e state protege o retorno contra login CSRF. O callback limpa código e state da URL. Há prazo de 10 minutos e uso único do estado local. Ao expirar o token, faça login novamente; não há renovação automática. O logout limpa o token local e abre /logout do Cognito. Isso não encerra a conta Google e não revoga instantaneamente uma cópia de JWT já emitida: a verificação é local, até expirar. Configure access tokens curtos (por exemplo, 5 a 15 minutos). Desativar o usuário local bloqueia imediatamente o acesso à API.
 
-SessionStorage pode ser lido por JavaScript da mesma origem: mantenha a prevenção de XSS e use HTTPS em produção. Conteúdo novo de usuários nos painéis é inserido com textContent. O projeto usa scripts inline existentes; uma política CSP estrita ou sessão em cookie HttpOnly exigiria trabalho adicional. Não registre tokens no console ou em logs.
+SessionStorage pode ser lido por JavaScript da mesma origem: mantenha a prevenção de XSS. Conteúdo novo de usuários nos painéis é inserido com textContent. O projeto usa scripts inline existentes; uma política CSP estrita ou sessão em cookie HttpOnly exigiria trabalho adicional. Não registre tokens no console ou em logs.
 
 ## 1. Preparar o User Pool e domínio
 
@@ -46,7 +46,7 @@ A URI do Google termina em **/oauth2/idpresponse**, no Cognito. A callback do Ea
 8. Configure scopes openid, email e profile.
 9. Configure callback: `http://localhost:3000/callback.html`.
 10. Configure logout/sign-out URL: `http://localhost:3000/index.html`.
-11. Em produção, adicione URLs HTTPS exatas e atualize o ambiente. Não use curingas.
+11. Para a entrega atual, mantenha as URLs locais acima cadastradas exatamente como usadas pelo EasyFood.
 12. Configure prazo curto para access tokens e anote o App Client ID.
 
 ## 4. Variáveis do .env
@@ -67,25 +67,26 @@ A região AWS é incorporada no User Pool ID e no domínio; não existe variáve
 
 Use os placeholders de .env.example apenas como referência. Não invente valores reais. /auth/config expõe somente os parâmetros públicos de login, nunca DATABASE_URL. Se o Cognito não estiver configurado, esse endpoint retorna 503 e a listagem pública continua disponível quando o banco está preparado.
 
-## 5. Banco e migração sem apagar dados
+## 5. Banco e migrations sem apagar dados
 
-1. Inicie o MySQL e faça backup do banco pelo MySQL Workbench.
-2. Para banco novo, execute primeiro database/schema.sql.
-3. Para banco novo ou existente ainda sem autenticação, execute **uma única vez** database/migrations/001-cognito-users.sql no banco EasyFood.
-4. A migração cria users e adiciona owner_id nullable em restaurants. Os registros anteriores ficam com owner_id NULL.
-5. Verifique as quantidades e valores dos restaurantes antes/depois.
-6. Execute no PowerShell:
+1. Inicie o MySQL e faça backup antes de alterar uma base existente.
+2. Para uma base nova, execute primeiro `database/schema.sql`.
+3. Aplique as migrations de `database/migrations/` em ordem, de `001` até `007`.
+4. Gere o Prisma Client com `npm run prisma:generate`.
+5. Use `npm run db:seed` para inserir os restaurantes iniciais sem duplicar registros existentes.
+6. Execute `npm test` antes de iniciar a aplicação.
 
 ```powershell
 npm install
 npm run prisma:generate
+npm run db:seed
 npm test
 npm start
 ```
 
-Não rode prisma:pull antes de aplicar a migração, pois isso apagaria do schema local os modelos ainda ausentes no banco. Não use reset, db push com perda de dados nem recrie o banco. MySQL confirma DDL implicitamente: se houver falha parcial, inspecione users e owner_id antes de tentar novamente; não apague tabelas para repetir.
+As migrations são SQL explícitas e não são aplicadas automaticamente pelo Prisma. Não use reset ou `db push` com perda de dados em uma base que já contém registros.
 
-Um usuário restaurante pode ter um único restaurante, garantido por índice único em owner_id. Admin pode cadastrar vários sem proprietário e atribuí-los pelo painel. Atribuição exige usuário ativo de perfil restaurante. Cadastros duplicados ou segundo vínculo retornam 409. A listagem pública mantém seus campos anteriores e rating numérico; owner_id só é exposto no painel autenticado.
+Um usuário com role `restaurante` pode ter um único restaurante, garantido por `owner_id` único. O administrador pode cadastrar restaurantes sem proprietário e atribuí-los a um usuário `restaurante` ativo. A listagem pública não usa `owner_id` como fonte de autorização; ownership é verificado no backend.
 
 ## 6. Grupos e administração de perfis
 
@@ -99,7 +100,7 @@ Para criar o primeiro administrador:
 3. Encerre a sessão anterior e faça novo login para receber um access token com `cognito:groups` atualizado.
 4. A primeira requisição autenticada sincronizará o registro local automaticamente; não é necessário executar `UPDATE` manual no MySQL.
 
-O mesmo fluxo vale para promoção ou rebaixamento entre cliente, restaurante e admin. O painel local não altera grupos AWS; para mudanças permanentes de perfil, altere o grupo no Cognito e obtenha um novo token. Não é permitido alterar o próprio perfil/estado pelo painel para evitar perda acidental de acesso.
+O mesmo fluxo vale para promoção ou rebaixamento entre cliente, restaurante e admin. **Role é somente leitura no EasyFood**: nem o painel nem a rota administrativa alteram o perfil local diretamente. Para mudar o perfil, altere o grupo no Cognito e faça novo login para que o backend sincronize a claim atualizada. O administrador local pode apenas bloquear ou reativar (`active`) outros usuários e não pode alterar o próprio acesso.
 
 ## 7. Rotas e permissões
 
@@ -114,7 +115,7 @@ O mesmo fluxo vale para promoção ou rebaixamento entre cliente, restaurante e 
 | PATCH /restaurants/:id | Restaurante proprietário ou admin; campos parciais |
 | DELETE /restaurants/:id | Somente admin |
 | GET /admin/users?offset=0 | Admin; páginas de até 100 usuários |
-| PATCH /admin/users/:id | Admin; role e/ou active |
+| PATCH /admin/users/:id | Admin; altera somente `active` de outro usuário |
 | PUT /admin/restaurants/:id/owner | Admin; owner_id numérico ou null |
 
 Sem token ou token inválido: 401. Identidade válida sem permissão ou usuário desativado: 403. Recurso inexistente: 404. Entrada inválida: 400. A API verifica ownership também no filtro de escrita, evitando que uma troca concorrente de dono permita edição indevida. Cadastrar com owner_id/role fornecidos pelo navegador não atribui privilégios: o service escolhe o dono a partir da identidade autenticada. PATCH/PUT de restaurante rejeitam campos extras.
@@ -123,9 +124,9 @@ Sem token ou token inválido: 401. Identidade válida sem permissão ou usuário
 
 1. **Público:** abra a página inicial e teste listagem, pesquisa e categorias. POST sem Bearer deve retornar 401.
 2. **Cliente:** login com Google → perfil cliente; confirme nome/e-mail, lista pública e ausência de cadastro/painéis. Acesso direto a /admin/users com seu access token deve retornar 403.
-3. **Restaurante:** admin promove uma segunda conta a restaurante. Nessa conta, abra perfil → dashboard → cadastre restaurante, edite e confirme persistência após reiniciar o servidor.
-4. **Outro restaurante:** use uma terceira conta promovida a restaurante; tente PATCH no ID da segunda conta, que deve retornar 403. DELETE também deve retornar 403.
-5. **Admin:** confira lista de usuários, mudança de perfil, desativação, cadastro, atribuição de proprietário, edição e exclusão de um restaurante criado só para teste.
+3. **Restaurante:** no console do Cognito, associe uma segunda conta ao grupo `restaurante`, faça novo login e abra perfil → dashboard → cadastre/edite o restaurante vinculado.
+4. **Outro restaurante:** associe uma terceira conta ao grupo `restaurante`; tente editar o restaurante da segunda conta, que deve retornar 403. DELETE também deve retornar 403.
+5. **Admin:** confira lista de usuários, role exibida como informação do Cognito, bloqueio/reativação por `active`, cadastro, atribuição de proprietário, edição e exclusão de um restaurante criado só para teste.
 6. **Logout:** clique Sair no perfil; /auth/me deve retornar 401 na aba. Ao entrar novamente, o Google pode reutilizar sua sessão.
 7. **Expiração:** após o prazo do token, confirme 401 e faça novo login.
 8. Não compartilhe tokens nem os inclua em screenshots. Use registros descartáveis nos testes de exclusão.

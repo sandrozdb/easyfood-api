@@ -46,5 +46,5 @@ test("perfil exige autenticação e retorna identidade local",async()=>{
  assert.equal((await req("/auth/me")).status,401); const response=await req("/auth/me","cliente");
  assert.equal(response.status,200);assert.equal((await response.json()).role,"cliente");
 });
-test("admin não altera seu próprio acesso",async()=>assert.equal((await req("/admin/users/1","admin","PATCH",{role:"cliente"})).status,403));
-test("admin rejeita perfil arbitrário",async()=>assert.equal((await req("/admin/users/2","admin","PATCH",{role:"superuser"})).status,400));
+test("admin não altera seu próprio acesso",async()=>assert.equal((await req("/admin/users/1","admin","PATCH",{active:false})).status,403));
+test("admin rejeita alteração local de role",async()=>assert.equal((await req("/admin/users/2","admin","PATCH",{role:"restaurante"})).status,400));
