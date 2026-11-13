@@ -344,15 +344,11 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="/app.css">
 </head>
 
 <body>
     <main class="celular">
-        <div class="barra-status">
-            <span>9:41</span>
-            <span>📶 🔋</span>
-        </div>
-
         <div
             class="container"
             tabindex="0"
@@ -424,13 +420,14 @@
             </section>
 
             <footer>
-                EasyFood — encontre os melhores sabores
+                EasyFood - Descubra os melhores sabores
             </footer>
         </div>
     </main>
 
     <script src="/auth.js"></script>
     <script src="/navigation.js" defer></script>
+    <script src="/custom-select.js" defer></script>
     <script src="/restaurant-list.js">
         let restaurantes = [];
         let categoriaSelecionada = "Todos";
@@ -580,7 +577,6 @@
 
                             <p class="categoria-restaurante">
                                 ${escaparHtml(restaurante.category)}
-                                • 20–30 min
                             </p>
 
                             <p class="descricao">

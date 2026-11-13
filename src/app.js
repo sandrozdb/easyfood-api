@@ -23,6 +23,7 @@ app.use("/restaurants", restaurantRoutes);
 app.use("/dishes", dishRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/favorites", favoriteRoutes);
+app.use("/dashboard", require("./modules/dashboard/dashboardRoutes"));
 
 
 app.use("/auth", require("./modules/auth/authRoutes"));

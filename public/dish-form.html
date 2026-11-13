@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prato | EasyFood</title><link rel="stylesheet" href="/account.css"><script src="/auth.js" defer></script><script src="/dish-form.js" defer></script></head>
-<body><main class="account">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prato | EasyFood</title><link rel="stylesheet" href="/account.css"><script src="/auth.js" defer></script><script src="/custom-select.js" defer></script><script src="/dish-form.js" defer></script></head>
+<body class="dish-form-page"><main class="account">
 <nav><a href="/dashboard.html">← Dashboard</a><a href="/index.html">EasyFood</a></nav>
-<h1 id="title">Adicionar prato</h1>
+<header class="dish-form-heading"><p class="eyebrow">CARDÁPIO</p><h1 id="title">Adicionar prato</h1><p>Preencha os dados para incluir uma nova opção no cardápio.</p></header>
 <form id="dish-form">
-    <label>Restaurante <select id="restaurantId" required></select></label>
+    <label>Restaurante <select id="restaurantId" data-custom-select required></select></label>
     <label>Nome <input id="name" maxlength="120" required></label>
     <label>Categoria <input id="category" maxlength="60" required></label>
     <label>Descrição <textarea id="description" maxlength="500"></textarea></label>

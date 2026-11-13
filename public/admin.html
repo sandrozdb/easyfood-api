@@ -1,2 +1,58 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Painel administrativo | EasyFood</title><link rel="stylesheet" href="/account.css"><script src="/auth.js" defer></script><script src="/dashboard.js" defer></script></head><body><main class="account"><nav><a href="/index.html">EasyFood</a><a href="/perfil.html">Meu perfil</a></nav><h1>Painel administrativo</h1><section id="admin-content" hidden><a class="action" href="/cadastro.html">Cadastrar restaurante</a><h2>Restaurantes</h2><section id="restaurants"></section><h2>Pratos</h2><section id="dishes"></section><h2>Usuários</h2><section id="users"></section><button id="more">Carregar mais usuários</button><h2>Histórico de atividades</h2><section id="activity"></section><button id="activity-more">Carregar mais atividades</button></section><p id="status" role="status"></p></main></body></html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel administrativo | EasyFood</title>
+    <link rel="stylesheet" href="/account.css">
+    <script src="/auth.js" defer></script>
+    <script src="/dashboard.js" defer></script>
+</head>
+<body class="admin-page">
+    <main class="account">
+        <nav><a href="/index.html">EasyFood</a><a href="/perfil.html">Meu perfil</a></nav>
+        <section id="admin-content" hidden>
+            <header class="admin-heading">
+                <div>
+                    <p class="eyebrow">CONTROLE DO EASYFOOD</p>
+                    <h1>Painel administrativo</h1>
+                    <p>Acompanhe os números e gerencie a plataforma por área.</p>
+                </div>
+                <a class="action admin-create" href="/cadastro.html"><span aria-hidden="true">＋</span>Novo restaurante</a>
+            </header>
+            <nav class="admin-tabs" aria-label="Áreas do painel">
+                <button class="admin-tab is-active" type="button" data-admin-tab="overview" aria-selected="true">Resumo</button>
+                <button class="admin-tab" type="button" data-admin-tab="restaurants" aria-selected="false">Restaurantes</button>
+                <button class="admin-tab" type="button" data-admin-tab="dishes" aria-selected="false">Pratos</button>
+                <button class="admin-tab" type="button" data-admin-tab="users" aria-selected="false">Usuários</button>
+                <button class="admin-tab" type="button" data-admin-tab="activity" aria-selected="false">Atividades</button>
+            </nav>
+            <section class="admin-panel is-active" data-admin-panel="overview" id="analytics">
+                <div class="admin-section-title"><div><p class="eyebrow">VISÃO GERAL</p><h2>Resumo da plataforma</h2></div><span class="admin-section-icon" aria-hidden="true">↗</span></div>
+                <p id="analytics-loading">Carregando indicadores...</p>
+                <div id="analytics-metrics" class="metric-grid"></div>
+                <p id="analytics-status" role="status"></p>
+            </section>
+            <section class="admin-panel" data-admin-panel="restaurants" hidden>
+                <div class="admin-section-title"><div><p class="eyebrow">CATÁLOGO</p><h2>Restaurantes</h2><p>Edite dados, vínculos e cadastros da plataforma.</p></div></div>
+                <section id="restaurants"></section>
+            </section>
+            <section class="admin-panel" data-admin-panel="dishes" hidden>
+                <div class="admin-section-title"><div><p class="eyebrow">CARDÁPIO</p><h2>Pratos</h2><p>Controle disponibilidade, fotos e informações.</p></div></div>
+                <section id="dishes"></section>
+            </section>
+            <section class="admin-panel" data-admin-panel="users" hidden>
+                <div class="admin-section-title"><div><p class="eyebrow">ACESSOS</p><h2>Usuários</h2><p>Consulte as permissões do Cognito e controle o acesso à plataforma.</p></div></div>
+                <section id="users"></section>
+                <button id="more" class="admin-more" type="button">Carregar mais usuários</button>
+            </section>
+            <section class="admin-panel" data-admin-panel="activity" hidden>
+                <div class="admin-section-title"><div><p class="eyebrow">AUDITORIA</p><h2>Histórico de atividades</h2><p>Consulte as ações recentes realizadas no sistema.</p></div></div>
+                <section id="activity"></section>
+                <button id="activity-more" class="admin-more" type="button">Carregar mais atividades</button>
+            </section>
+        </section>
+        <p id="status" role="status"></p>
+    </main>
+</body>
+</html>

@@ -28,7 +28,7 @@ test("páginas de cardápio e gerenciamento possuem os campos e ações essencia
     assert.match(restaurant, /Cardápio/);
     for (const id of ["name", "category", "description", "price", "imageFile", "available"]) assert.match(form, new RegExp(`id="${id}"`));
     assert.match(form, /dish-placeholder\.svg/);
-    assert.match(dashboard, /Meus Pratos/);
+    assert.match(dashboard, /Meus pratos/);
     assert.match(admin, /<h2>Pratos<\/h2>/);
 });
 

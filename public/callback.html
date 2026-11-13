@@ -1,2 +1,24 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Concluindo login | EasyFood</title><link rel="stylesheet" href="/account.css"><script src="/auth.js" defer></script><script src="/callback.js" defer></script></head><body><main class="account"><nav><a href="/index.html">EasyFood</a><a href="/perfil.html">Meu perfil</a></nav><h1>Concluindo login</h1><p>Aguarde enquanto verificamos seu acesso.</p><a href="/login.html">Voltar ao login</a><p id="status" role="status"></p></main></body></html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Concluindo login | EasyFood</title>
+    <link rel="stylesheet" href="/account.css">
+    <script src="/auth.js" defer></script>
+    <script src="/callback.js" defer></script>
+</head>
+<body class="auth-page callback-page">
+    <main class="account auth-card">
+        <a class="auth-brand" href="/index.html" aria-label="Ir para o início do EasyFood">Easy<span>Food</span></a>
+        <section class="auth-content" aria-labelledby="callback-title">
+            <div class="auth-illustration" aria-hidden="true"><span class="auth-shield">✓</span></div>
+            <p class="eyebrow">Acesso seguro</p>
+            <h1 id="callback-title">Concluindo seu login</h1>
+            <p class="loading callback-message">Aguarde enquanto verificamos seu acesso com segurança.</p>
+            <p id="status" role="status" aria-live="polite"></p>
+            <a class="auth-back" href="/login.html">← Voltar ao login</a>
+        </section>
+    </main>
+</body>
+</html>

@@ -5,6 +5,7 @@
         const user = await EasyAuth.me();
         if (!user) return location.replace("/login.html");
         if (!["restaurante", "admin"].includes(user.role)) { notice.textContent = "Seu perfil não permite cadastrar ou editar restaurantes."; return; }
+        window.restaurantManagementUrl = user.role === "admin" ? "/admin.html#restaurants" : "/dashboard.html";
         const idText = new URLSearchParams(location.search).get("id");
         if (idText !== null) {
             const id = Number(idText);
@@ -16,6 +17,7 @@
             if (!row) throw new Error("Restaurante indisponível para edição.");
             window.editRestaurantId = id;
             for (const field of ["name","category","description","address","phone","rating"]) document.getElementById(field).value = row[field];
+            document.getElementById("category").dispatchEvent(new Event("change", { bubbles: true }));
             document.getElementById("contador").textContent = row.description.length + "/160";
             document.getElementById("botao-cadastrar").textContent = "Salvar alterações";
         }

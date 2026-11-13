@@ -47,4 +47,4 @@ test("rotas expõem os quatro contratos", () => { const source = fs.readFileSync
 test("frontend não envia userId", () => { for (const file of ["../public/favorites.js", "../public/restaurant-favorite.js"]) assert.doesNotMatch(fs.readFileSync(require.resolve(file), "utf8"), /userId/); });
 test("página de favoritos usa APIs seguras do DOM", () => { const source = fs.readFileSync(require.resolve("../public/favorites.js"), "utf8"); assert.match(source, /textContent/); assert.doesNotMatch(source, /innerHTML/); });
 test("página individual possui ação de favorito", () => assert.match(fs.readFileSync(require.resolve("../public/restaurant.html"), "utf8"), /restaurant-favorite\.js/));
-test("listagem possui estado vazio", () => assert.match(fs.readFileSync(require.resolve("../public/favorites.js"), "utf8"), /ainda não adicionou/));
+test("listagem possui estado vazio", () => assert.match(fs.readFileSync(require.resolve("../public/favorites.js"), "utf8"), /ainda não salvou nenhum restaurante/));

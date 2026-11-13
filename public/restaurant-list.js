@@ -56,7 +56,7 @@
         heading.append(link);
         info.append(
             heading,
-            element("p", `${restaurant.category} • 20–30 min`, "categoria-restaurante"),
+            element("p", restaurant.category, "categoria-restaurante"),
             element("p", restaurant.description || "Descrição não informada.", "descricao"),
             element("p", `📍 ${restaurant.address || "Endereço não informado"}`, "detalhe"),
             element("p", `📞 ${restaurant.phone || "Telefone não informado"}`, "detalhe")

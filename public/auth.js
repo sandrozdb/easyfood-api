@@ -15,8 +15,8 @@ window.EasyAuth = (() => {
     }
     async function me() {
         const response = await api("/auth/me");
-        if (response.status === 401) return null;
         const data = await response.json();
+        if (response.status === 401) return null;
         if (!response.ok) throw new Error(data.message);
         return data;
     }
@@ -71,3 +71,82 @@ window.EasyAuth = (() => {
     }
     return { api, me, login, callback, logout, clear };
 })();
+
+if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", async () => {
+    const publicAuthPage = ["/login.html", "/callback.html"].includes(location.pathname);
+    let user = null;
+    if (!publicAuthPage) {
+        try { user = await EasyAuth.me(); } catch {}
+    }
+    const items = [{ href: "/index.html", label: "Início" }];
+    if (user?.role === "cliente") items.push({ href: "/favorites.html", label: "Meus favoritos" });
+    if (user?.role === "restaurante") {
+        items.push({ href: "/dashboard.html", label: "Dashboard" });
+    }
+    if (user?.role === "admin") {
+        items.push({ href: "/admin.html", label: "Administração" });
+    }
+    items.push({ href: user ? "/perfil.html" : "/login.html", label: user ? "Meu perfil" : "Entrar com Google" });
+    if (user) items.push({ action: "logout", label: "Sair" });
+
+    const nav = document.createElement("nav");
+    nav.className = "app-menu";
+    nav.id = "app-menu";
+    nav.setAttribute("aria-label", "Navegação principal");
+    for (const item of items) {
+        if (item.action === "logout") {
+            const logout = document.createElement("button");
+            logout.type = "button";
+            logout.className = "app-menu-action";
+            logout.textContent = item.label;
+            logout.addEventListener("click", () => EasyAuth.logout());
+            nav.append(logout);
+            continue;
+        }
+        const link = document.createElement("a");
+        link.href = item.href;
+        if (location.pathname === item.href || location.pathname === "/" && item.href === "/index.html") link.className = "active";
+        link.textContent = item.label;
+        nav.append(link);
+    }
+
+    let button = document.querySelector(".menu");
+    if (!button) {
+        const bar = document.createElement("div");
+        bar.className = "app-topbar";
+        const logo = document.createElement("a");
+        logo.href = "/index.html";
+        logo.className = "app-logo";
+        logo.append("Easy");
+        const logoAccent = document.createElement("span");
+        logoAccent.textContent = "Food";
+        logo.append(logoAccent);
+        button = document.createElement("button");
+        button.className = "menu";
+        bar.append(logo, button);
+        document.querySelector(".account")?.prepend(bar);
+    }
+    button.type = "button";
+    button.classList.add("app-menu-button");
+    button.textContent = "☰";
+    button.setAttribute("aria-label", "Abrir menu de navegação");
+    button.setAttribute("aria-controls", nav.id);
+    button.setAttribute("aria-expanded", "false");
+    button.insertAdjacentElement("afterend", nav);
+
+    const closeMenu = () => {
+        nav.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+    };
+    button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const open = nav.classList.toggle("open");
+        button.setAttribute("aria-expanded", String(open));
+    });
+    document.addEventListener("click", (event) => {
+        if (!nav.contains(event.target)) closeMenu();
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMenu();
+    });
+});

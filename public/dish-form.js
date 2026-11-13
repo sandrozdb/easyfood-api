@@ -26,6 +26,7 @@
         const restaurants = await restaurantsResponse.json();
         for (const restaurant of restaurants) { const option = document.createElement("option"); option.value = restaurant.id; option.textContent = restaurant.name; restaurantSelect.append(option); }
         if (requestedRestaurantId) restaurantSelect.value = String(requestedRestaurantId);
+        restaurantSelect.dispatchEvent(new Event("change", { bubbles: true }));
         if (!restaurants.some(item => item.id === Number(restaurantSelect.value))) throw new Error("Nenhum restaurante disponível para este usuário.");
         if (dishId) {
             document.getElementById("title").textContent = "Editar prato";
@@ -33,6 +34,7 @@
             const dish = await response.json();
             if (!restaurants.some(item => item.id === dish.restaurantId)) throw new Error("Você não administra o restaurante deste prato.");
             restaurantSelect.value = dish.restaurantId; restaurantSelect.disabled = true;
+            restaurantSelect.dispatchEvent(new Event("change", { bubbles: true }));
             for (const field of ["name", "category", "description", "price"]) document.getElementById(field).value = dish[field] ?? "";
             document.getElementById("available").checked = dish.available;
             if (dish.imageUrl) { currentPreview.src = dish.imageUrl; currentSection.hidden = false; }

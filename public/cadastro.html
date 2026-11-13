@@ -284,34 +284,21 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="/app.css">
 </head>
 
 <body>
     <main class="celular">
-        <div class="barra-status">
-            <span>9:41</span>
-            <span>📶 🔋</span>
-        </div>
-
         <div
             class="container"
             tabindex="0"
             aria-label="Formulário de cadastro"
         >
             <header>
-                <a
-                    href="/"
-                    class="voltar"
-                    aria-label="Voltar para a página inicial"
-                >
-                    ←
-                </a>
-
-                <div class="logo">
+                <a href="/" class="logo" aria-label="EasyFood - página inicial">
                     Easy<span>Food</span>
-                </div>
-
-                <div class="icone-cabecalho">🍽️</div>
+                </a>
+                <button type="button" class="menu" aria-label="Abrir menu de navegação">☰</button>
             </header>
 
             <section class="introducao">
@@ -362,6 +349,7 @@
                     <select
                         id="category"
                         name="category"
+                        data-custom-select
                         required
                     >
                         <option value="">
@@ -507,6 +495,7 @@
     </main>
 
     <script src="/auth.js"></script>
+    <script src="/custom-select.js" defer></script>
     <script src="/registration.js" defer></script>
     <script>
         const formulario =
@@ -887,7 +876,7 @@
                 mensagem.textContent =
                     window.editRestaurantId ? "Restaurante atualizado com sucesso!" : "Restaurante cadastrado com sucesso!";
 
-                if (window.editRestaurantId) { location.assign("/dashboard.html"); return; }
+                if (window.editRestaurantId) { location.assign(window.restaurantManagementUrl || "/index.html"); return; }
                 formulario.reset();
                 contador.textContent = "0/160";
 

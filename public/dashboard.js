@@ -1,7 +1,30 @@
 (async () => {
     const status = document.getElementById("status");
     const adminPage = location.pathname === "/admin.html";
-    function element(tag, text) { const el = document.createElement(tag); if (text !== undefined) el.textContent = text; return el; }
+    function setupAdminTabs() {
+        if (!adminPage || typeof document.querySelectorAll !== "function") return;
+        const tabs = [...document.querySelectorAll("[data-admin-tab]")];
+        const panels = [...document.querySelectorAll("[data-admin-panel]")];
+        for (const tab of tabs) {
+            tab.addEventListener("click", () => {
+                const selected = tab.dataset.adminTab;
+                for (const item of tabs) {
+                    const active = item === tab;
+                    item.classList.toggle("is-active", active);
+                    item.setAttribute("aria-selected", String(active));
+                }
+                for (const panel of panels) {
+                    const active = panel.dataset.adminPanel === selected;
+                    panel.classList.toggle("is-active", active);
+                    panel.hidden = !active;
+                }
+            });
+        }
+        const requestedTab = location.hash?.slice(1);
+        tabs.find(tab => tab.dataset.adminTab === requestedTab)?.click();
+    }
+    setupAdminTabs();
+    function element(tag, text, className) { const el = document.createElement(tag); if (text !== undefined) el.textContent = text; if (className) el.className = className; return el; }
     async function request(url, options) {
         const response = await EasyAuth.api(url, options);
         const data = response.status === 204 ? null : await response.json();
@@ -11,6 +34,7 @@
     function button(parent, text, action) {
         const el = element("button", text); parent.append(el);
         el.onclick = async () => { el.disabled = true; status.textContent = ""; try { await action(); } catch (error) { status.textContent = error.message; } finally { el.disabled = false; } };
+        return el;
     }
     function json(method, body) { return { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }; }
     try {
@@ -18,26 +42,61 @@
         if (!user) return location.replace("/login.html");
         if (!["restaurante", "admin"].includes(user.role) || adminPage && user.role !== "admin") { status.textContent = "Você não tem acesso a este painel."; return; }
         if (adminPage) document.getElementById("admin-content").hidden = false;
+        function metric(parent, label, value) {
+            const card = element("article"); card.append(element("span", label), element("strong", String(value))); parent.append(card);
+        }
+        async function analytics() {
+            const loading = document.getElementById("analytics-loading"), metrics = document.getElementById("analytics-metrics"), analyticsStatus = document.getElementById("analytics-status");
+            try {
+                const data = await request(adminPage ? "/dashboard/admin" : "/dashboard/restaurant");
+                loading.hidden = true; metrics.replaceChildren();
+                if (!adminPage && !data.hasRestaurant) {
+                    document.body.classList.add("dashboard-without-restaurant");
+                    analyticsStatus.textContent = "Você ainda não possui um restaurante cadastrado. Crie seu espaço e comece a montar o cardápio.";
+                    return;
+                }
+                if (!adminPage) document.body.classList.remove("dashboard-without-restaurant");
+                if (adminPage) {
+                    for (const [label, value] of [["Usuários",data.users.total],["Restaurantes",data.restaurants.total],["Pratos",data.dishes.total],["Avaliações",data.reviews.total],["Média das avaliações",Number(data.reviews.averageRating).toFixed(1)],["Atividades 24h",data.activities.last24h]]) metric(metrics,label,value);
+                    const pending = [];
+                    if (data.users.inactive > 0) pending.push(`${data.users.inactive} ${data.users.inactive === 1 ? "usuário inativo" : "usuários inativos"}`);
+                    if (data.restaurants.withoutOwner > 0) pending.push(`${data.restaurants.withoutOwner} ${data.restaurants.withoutOwner === 1 ? "restaurante sem proprietário" : "restaurantes sem proprietário"}`);
+                    analyticsStatus.textContent = pending.length ? `Pendências: ${pending.join(" e ")}.` : "";
+                    return;
+                }
+                for (const [label, value] of [["Pratos",data.metrics.totalDishes],["Disponíveis",data.metrics.availableDishes],["Indisponíveis",data.metrics.unavailableDishes],["Avaliação média",Number(data.metrics.averageRating).toFixed(1)],["Avaliações",data.metrics.reviewCount],["Favoritos",data.metrics.favoriteCount]]) metric(metrics,label,value);
+                const distribution = document.getElementById("rating-distribution"); distribution.replaceChildren();
+                const maximum = Math.max(1, ...Object.values(data.ratingDistribution));
+                for (let rating = 5; rating >= 1; rating--) { const value=data.ratingDistribution[rating],row=element("div",undefined,"rating-row"),label=element("span",`${rating} ★`),track=element("span",undefined,"rating-track"),fill=element("span",undefined,"rating-fill"); fill.style.width=`${value/maximum*100}%`; track.append(fill); row.append(label,track,element("strong",String(value))); distribution.append(row); }
+                const reviews = document.getElementById("recent-reviews"); reviews.replaceChildren();
+                if (!data.recentReviews.length) reviews.append(element("p", "Seu restaurante ainda não recebeu avaliações."));
+                for (const review of data.recentReviews) { const card=element("article"); card.append(element("h3", `${review.rating} estrelas`),element("p",review.comment||"Sem comentário."),element("p",review.authorName||"Cliente"),element("p",new Date(review.createdAt).toLocaleDateString("pt-BR"))); reviews.append(card); }
+            } catch (error) { loading.hidden = true; analyticsStatus.textContent = "Não foi possível carregar os indicadores."; }
+        }
+        await analytics();
         async function restaurants() {
             const rows = await request("/restaurants/managed");
             const container = document.getElementById("restaurants"); container.replaceChildren();
             if (!adminPage) document.getElementById("create").hidden = user.role === "restaurante" && rows.length > 0;
             if (!rows.length) container.append(element("p", "Nenhum restaurante vinculado."));
             for (const row of rows) {
-                const card = element("article"); card.append(element("h3", row.name), element("p", row.address));
-                const edit = element("a", "Editar"); edit.href = "/cadastro.html?id=" + row.id; card.append(edit);
-                const addDish = element("a", "Adicionar prato"); addDish.href = "/dish-form.html?restaurantId=" + row.id; card.append(addDish);
+                const card = element("article", undefined, adminPage ? "admin-restaurant-card" : "");
+                card.append(element("h3", row.name), element("p", row.category || "Sem categoria", "admin-restaurant-category"));
+                const edit = element("a", "Editar", "admin-card-link"); edit.href = "/cadastro.html?id=" + row.id; card.append(edit);
+                const addDish = element("a", "Adicionar prato", "admin-card-link"); addDish.href = "/dish-form.html?restaurantId=" + row.id; card.append(addDish);
                 if (adminPage) {
-                    const label = element("label", "ID do proprietário (vazio remove vínculo): ");
+                    const label = element("label", "Proprietário", "admin-owner-field");
                     const owner = element("input"); owner.type = "number"; owner.min = "1"; owner.value = row.owner_id || ""; label.append(owner); card.append(label);
-                    button(card, "Salvar proprietário", async () => {
+                    const saveOwner = button(card, "Salvar proprietário", async () => {
                         await request("/admin/restaurants/" + row.id + "/owner", json("PUT", { owner_id: owner.value ? Number(owner.value) : null }));
                         status.textContent = "Proprietário atualizado.";
                     });
-                    button(card, "Excluir", async () => {
+                    saveOwner.className = "admin-owner-save";
+                    const removeRestaurant = button(card, "Excluir", async () => {
                         if (!confirm("Excluir o restaurante " + row.name + "?")) return;
                         await request("/restaurants/" + row.id, { method: "DELETE" }); await restaurants();
                     });
+                    removeRestaurant.className = "admin-restaurant-delete";
                 }
                 container.append(card);
             }
@@ -68,12 +127,13 @@
                 document.getElementById("more").hidden = rows.length < 100;
                 for (const item of rows) {
                     const card = element("article"); card.append(element("h3", "#" + item.id + " — " + (item.name || item.email || "Usuário")));
-                    const role = element("select"); role.setAttribute("aria-label", "Perfil de " + (item.name || item.id));
-                    for (const name of ["cliente", "restaurante", "admin"]) { const option = element("option", name); option.value = name; role.append(option); }
-                    role.value = item.role; card.append(role);
+                    const roleLabel = element("p", "Permissão", "admin-user-role-label");
+                    const role = element("strong", item.role, "admin-user-role");
+                    const roleHint = element("p", "Gerenciada pelos grupos do AWS Cognito.", "admin-user-role-hint");
+                    card.append(roleLabel, role, roleHint);
                     const label = element("label", "Ativo"); const active = element("input"); active.type = "checkbox"; active.checked = item.active; label.append(active); card.append(label);
-                    if (item.id !== user.id) button(card, "Salvar usuário", async () => { await request("/admin/users/" + item.id, json("PATCH", { role: role.value, active: active.checked })); status.textContent = "Usuário atualizado."; });
-                    else { role.disabled = true; active.disabled = true; }
+                    if (item.id !== user.id) button(card, "Salvar acesso", async () => { await request("/admin/users/" + item.id, json("PATCH", { active: active.checked })); status.textContent = "Acesso do usuário atualizado."; });
+                    else active.disabled = true;
                     document.getElementById("users").append(card);
                 }
             }

@@ -10,3 +10,12 @@ test("retorna metadata e tamanhos",async()=>{const input=await sample();const r=
 test("frontend de perfil usa FormData sem userId",()=>{const s=fs.readFileSync(require.resolve("../public/profile.js"),"utf8");assert.match(s,/new FormData/);assert.doesNotMatch(s,/userId/);});
 test("frontend de prato usa FormData",()=>assert.match(fs.readFileSync(require.resolve("../public/dish-form.js"),"utf8"),/new FormData/));
 test("User e Dish reutilizam ImageService",()=>{assert.match(fs.readFileSync(require.resolve("../src/modules/users/profileImageService.js"),"utf8"),/imageService/);assert.match(fs.readFileSync(require.resolve("../src/modules/dishes/dishController.js"),"utf8"),/imageService/);});
+test("falha ao assinar foto não bloqueia apresentação do usuário",async()=>{
+    const service=require("../src/modules/users/profileImageService");
+    const user={id:7,name:"Usuário",profileImageKey:"easyfood/users/7/profile/foto.webp"};
+    const result=await service.present(user,{getReadUrl:async()=>{throw new Error("S3 indisponível");}});
+    assert.equal(result.profileImageUrl,null);
+    assert.equal(result.hasProfileImage,true);
+    assert.equal(result.profileImageKey,undefined);
+    assert.equal(result.id,7);
+});

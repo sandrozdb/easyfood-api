@@ -125,6 +125,10 @@ A migration aditiva `007-create-favorites.sql` cria a relação N:N entre client
 
 A página inicial combina os filtros, mantém o estado na URL e aplica debounce de 300 ms na busca. A nota mínima e as ordenações por avaliação usam `averageRating` e `reviewCount` derivados de Reviews, não o campo legado `rating`.
 
+## Dashboard
+
+O dashboard do restaurante reúne pratos disponíveis e indisponíveis, média e distribuição das Reviews, quantidade de Favoritos e cinco avaliações recentes, sempre com o restaurante identificado pelo usuário autenticado. O painel administrativo apresenta totais reais de usuários, restaurantes, pratos, Reviews, Favoritos e atividades recentes. Os endpoints públicos não foram alterados e nenhuma métrica de vendas, pedidos ou faturamento é inventada.
+
 ## Imagens privadas
 
 Fluxo oficial:
@@ -174,7 +178,7 @@ npm audit
 npm audit --omit=dev
 ```
 
-A suíte possui **289 testes** cobrindo validações, restaurantes, busca e filtros, Cognito, JWT, RBAC, ownership, IDOR, pratos, S3, Multer, Sharp, ImageService, foto de perfil, Reviews, Favoritos, Activity Log, EmailService e frontend. A CI executa os testes em pushes e pull requests para `main`.
+A suíte possui **352 testes** cobrindo validações, restaurantes, busca e filtros, dashboards analíticos, Cognito, JWT, RBAC, ownership, IDOR, pratos, S3, Multer, Sharp, ImageService, foto de perfil, Reviews, Favoritos, Activity Log, EmailService e frontend. A CI executa os testes em pushes e pull requests para `main`.
 
 ## Decisões arquiteturais
 
