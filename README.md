@@ -26,7 +26,7 @@ MVP acadêmico de descoberta e gestão de restaurantes, construído em Node.js, 
 - **Analytics:** dashboards para restaurante e administrador, usando apenas dados reais existentes.
 - **Frontend:** HTML, CSS e JavaScript vanilla com experiência mobile-first.
 - **Qualidade:** **355 testes aprovados, 0 falhas**, Prisma válido e `npm audit` sem vulnerabilidades na validação final local.
-- **CI:** GitHub Actions executada na `main`; commit `3435f64` validado com sucesso.
+- **CI:** GitHub Actions executada com sucesso na `main`.
 
 **Documentação rápida:** [Arquitetura](docs/architecture.md) · [Testes e QA](docs/testing-and-qa.md) · [Deploy](docs/deployment.md) · [Roteiro de demonstração](docs/demo-guide.md) · [Autenticação](docs/autenticacao-cognito-google.md) · [S3](docs/aws-s3-setup.md)
 
@@ -229,7 +229,7 @@ Os fluxos dos três perfis também foram validados manualmente ponta a ponta. O 
 
 A GitHub Actions roda em pushes e pull requests para `main`, usando Node.js 20, gera o Prisma Client e executa `npm test`.
 
-A execução associada ao commit `3435f64` terminou com sucesso após a inclusão dos dashboards e do redesign mobile-first.
+A pipeline da `main` está configurada para validar automaticamente os testes a cada push e pull request.
 
 ## Decisões arquiteturais
 
