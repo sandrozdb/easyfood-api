@@ -30,6 +30,48 @@ MVP acadêmico de descoberta e gestão de restaurantes, construído em Node.js, 
 
 **Documentação rápida:** [Arquitetura](docs/architecture.md) · [Testes e QA](docs/testing-and-qa.md) · [Autenticação](docs/autenticacao-cognito-google.md) · [S3](docs/aws-s3-setup.md)
 
+## Evidências da aplicação
+
+As capturas abaixo registram os principais fluxos validados no ambiente local. Os valores exibidos refletem os dados existentes no momento de cada captura.
+
+### Home e descoberta
+
+<p align="center">
+  <img src="docs/evidencias/01-home.webp" alt="Home mobile do EasyFood com busca, filtros e listagem de restaurantes" width="350">
+</p>
+
+### Cliente — Favoritos
+
+<p align="center">
+  <img src="docs/evidencias/02-cliente-favoritos.webp" alt="Tela de favoritos do perfil cliente" width="350">
+</p>
+
+### Restaurante — Dashboard
+
+<p align="center">
+  <img src="docs/evidencias/03-restaurante-dashboard.webp" alt="Dashboard do perfil restaurante com indicadores e distribuição de avaliações" width="350">
+</p>
+
+A captura documenta a estrutura do dashboard e seus KPIs; a lógica dos indicadores também é coberta pela suíte automatizada.
+
+### Restaurante — Cadastro de prato
+
+<p align="center">
+  <img src="docs/evidencias/04-restaurante-novo-prato.webp" alt="Formulário mobile de cadastro de prato com upload de imagem" width="350">
+</p>
+
+### Admin — Visão geral
+
+<p align="center">
+  <img src="docs/evidencias/05-admin-dashboard.webp" alt="Painel administrativo com indicadores globais da plataforma" width="350">
+</p>
+
+### CI — GitHub Actions
+
+<p align="center">
+  <img src="docs/evidencias/06-ci-github.webp" alt="Pipeline GitHub Actions concluída com sucesso" width="650">
+</p>
+
 ## Funcionalidades
 
 - listagem pública de restaurantes;
